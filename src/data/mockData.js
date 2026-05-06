@@ -249,3 +249,13 @@ export const localizationStrings = [
 ];
 
 export const locales = ['en', 'es', 'fr', 'ja'];
+
+// ─── Notifications ──────────────────────────────────────────────────────
+export const notifications = [
+  { id: 1, title: 'New User Report', message: 'Jordan Lee was reported for "Inappropriate photo"', time: '4m ago', type: 'report', unread: true },
+  { id: 2, title: 'System Update', message: 'V2.4.0 deployment successful. Check release notes.', time: '1h ago', type: 'system', unread: true },
+  { id: 3, title: 'High Revenue Alert', message: 'Daily revenue exceeded $10k for the first time this month!', time: '3h ago', type: 'monetization', unread: true },
+  { id: 4, title: 'New Support Ticket', message: 'User #u_2240 requested help with subscription billing.', time: '5h ago', type: 'support', unread: true },
+  { id: 5, title: 'Server Warning', message: 'High CPU usage detected on cluster-alpha-4.', time: '1d ago', type: 'system', unread: false },
+  { id: 6, title: 'Moderation Action', message: 'Kareem Hassan was banned following multiple reports.', time: '1d ago', type: 'moderation', unread: false },
+];

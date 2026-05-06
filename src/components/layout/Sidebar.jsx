@@ -1,20 +1,24 @@
-import { NavLink } from 'react-router-dom';
-import { Heart } from 'lucide-react';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { LogOut } from 'lucide-react';
 import { navConfig } from '../../routes/navConfig.js';
+import { toast } from 'sonner';
 
 export default function Sidebar() {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    // Logic to clear auth session would go here
+    navigate('/login');
+    toast.success("Logged out successfully!");
+  };
+
   return (
     <aside className="w-64 shrink-0 bg-white border-r border-gray-200 flex flex-col h-screen sticky top-0">
       {/* Brand */}
-      <div className="h-16 flex items-center gap-2.5 px-5 border-b border-gray-200">
-        <div className="w-9 h-9 rounded-lg bg-brand-500 flex items-center justify-center">
-          <Heart className="w-5 h-5 text-white" fill="white" />
-        </div>
-        <div>
-          <div className="text-[15px] font-semibold text-gray-900 leading-tight">VivaLeve</div>
-          <div className="text-[11px] text-gray-500 leading-tight">Admin Console</div>
-        </div>
-      </div>
+      <Link to={'/'} className="h-24 flex items-center gap-2.5 justify-center px-5 border-b border-gray-200 py-2">
+        <img src="/logo.png" alt="" className='w-fit h-full object-contain ' />
+
+      </Link>
 
       {/* Nav */}
       <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
@@ -26,16 +30,15 @@ export default function Sidebar() {
             key={key}
             to={path}
             className={({ isActive }) =>
-              `flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
-                isActive
-                  ? 'bg-brand-50 text-brand-700 font-medium'
-                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+              `flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${isActive
+                ? 'bg-[#429CA8]/10 text-[#429CA8] font-medium'
+                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
               }`
             }
           >
             {({ isActive }) => (
               <>
-                <Icon className={`w-[18px] h-[18px] ${isActive ? 'text-brand-500' : 'text-gray-400'}`} />
+                <Icon className={`w-[18px] h-[18px] ${isActive ? 'text-[#429CA8]' : 'text-gray-400'}`} />
                 <span>{label}</span>
               </>
             )}
@@ -43,12 +46,15 @@ export default function Sidebar() {
         ))}
       </nav>
 
-      {/* Footer card */}
+      {/* Logout Button */}
       <div className="p-3 border-t border-gray-200">
-        <div className="rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 text-white p-3">
-          <div className="text-[12px] font-semibold">VivaLeve v1.0</div>
-          <div className="text-[11px] text-brand-100 mt-0.5">Build · 2026.05.06</div>
-        </div>
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
+        >
+          <LogOut className="w-[18px] h-[18px]" />
+          <span>Logout</span>
+        </button>
       </div>
     </aside>
   );

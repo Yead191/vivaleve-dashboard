@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import AdminLayout from './components/layout/AdminLayout.jsx';
 
-import Dashboard from './pages/Dashboard/Dashboard.jsx';
+import Dashboard from './pages/Dashboard/index.jsx';
 import UsersList from './pages/Users/UsersList.jsx';
 import UserDetail from './pages/Users/UserDetail.jsx';
 import Moderation from './pages/Moderation/Moderation.jsx';
@@ -10,19 +10,32 @@ import Monetization from './pages/Monetization/Monetization.jsx';
 import Messaging from './pages/Messaging/Messaging.jsx';
 import Config from './pages/Config/Config.jsx';
 
+// Auth Pages
+import Login from './pages/Auth/Login.jsx';
+import ForgotPassword from './pages/Auth/ForgotPassword.jsx';
+import VerifyOtp from './pages/Auth/VerifyOtp.jsx';
+import ResetPassword from './pages/Auth/ResetPassword.jsx';
+
 export default function App() {
   return (
     <Routes>
+      {/* Auth Routes */}
+      <Route path="/login" element={<Login />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/verify-otp" element={<VerifyOtp />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
+
+      {/* Admin Protected Routes */}
       <Route element={<AdminLayout />}>
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
-        <Route path="/dashboard"    element={<Dashboard />} />
-        <Route path="/users"        element={<UsersList />} />
-        <Route path="/users/:id"    element={<UserDetail />} />
-        <Route path="/moderation"   element={<Moderation />} />
-        <Route path="/analytics"    element={<Analytics />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/users" element={<UsersList />} />
+        <Route path="/users/:id" element={<UserDetail />} />
+        <Route path="/moderation" element={<Moderation />} />
+        <Route path="/analytics" element={<Analytics />} />
         <Route path="/monetization" element={<Monetization />} />
-        <Route path="/messaging"    element={<Messaging />} />
-        <Route path="/config"       element={<Config />} />
+        <Route path="/messaging" element={<Messaging />} />
+        <Route path="/config" element={<Config />} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Route>
     </Routes>
