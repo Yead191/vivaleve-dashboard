@@ -18,7 +18,7 @@ export default function SuspendUserModal({ open, user, onCancel, onConfirm }) {
       okButtonProps={{ danger: true }}
       onOk={handleOk}
       onCancel={onCancel}
-      destroyOnClose
+      centered
     >
       <p className="text-[13px] text-gray-600 mb-4">
         The user will be unable to sign in for the selected duration. They’ll see the suspension reason on their next attempt.
@@ -33,7 +33,7 @@ export default function SuspendUserModal({ open, user, onCancel, onConfirm }) {
           <Select
             options={[
               { value: '24h', label: '24 hours' },
-              { value: '7d',  label: '7 days' },
+              { value: '7d', label: '7 days' },
               { value: '30d', label: '30 days' },
               { value: '90d', label: '90 days' },
             ]}

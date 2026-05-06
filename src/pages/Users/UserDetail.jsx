@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { App, Button, Tag } from 'antd';
 import {
   ArrowLeft, Edit3, Pause, Ban, Trash2, Plus, MapPin, Mail, Phone, Calendar, ShieldCheck,
@@ -13,30 +13,31 @@ import AddNoteModal from './AddNoteModal.jsx';
 import SuspendUserModal from './SuspendUserModal.jsx';
 import BanUserModal from './BanUserModal.jsx';
 import { users, reportsAgainstUsers } from '../../data/mockData.js';
+import { toast } from 'sonner';
 
 const photoColors = ['from-rose-300 to-pink-400', 'from-amber-300 to-orange-400', 'from-emerald-300 to-teal-400', 'from-violet-300 to-purple-400'];
 
 export default function UserDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { message, modal } = App.useApp();
+  const { modal } = App.useApp();
 
   const user = useMemo(() => users.find(u => u.id === id) || users[0], [id]);
 
-  const [editOpen,    setEditOpen]    = useState(false);
-  const [noteOpen,    setNoteOpen]    = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [noteOpen, setNoteOpen] = useState(false);
   const [suspendOpen, setSuspendOpen] = useState(false);
-  const [banOpen,     setBanOpen]     = useState(false);
+  const [banOpen, setBanOpen] = useState(false);
 
   const [notes, setNotes] = useState([
-    { id: 1, author: 'Aria Dey',   when: '2026-04-22', visibility: 'internal', body: 'User requested data export under GDPR. Verified identity via email magic link.' },
-    { id: 2, author: 'Mod Team',   when: '2026-03-10', visibility: 'flagged',  body: 'Two reports closed as not actionable; reporter context was unclear.' },
+    { id: 1, author: 'Aria Dey', when: '2026-04-22', visibility: 'internal', body: 'User requested data export under GDPR. Verified identity via email magic link.' },
+    { id: 2, author: 'Mod Team', when: '2026-03-10', visibility: 'flagged', body: 'Two reports closed as not actionable; reporter context was unclear.' },
   ]);
 
   const matchHistory = [
-    { id: 'm1', other: 'Maya Chen',     when: '2026-04-30', messages: 24 },
-    { id: 'm2', other: 'Liam Murphy',   when: '2026-04-22', messages: 8  },
-    { id: 'm3', other: 'Aiko Tanaka',   when: '2026-04-19', messages: 0  },
+    { id: 'm1', other: 'Maya Chen', when: '2026-04-30', messages: 24 },
+    { id: 'm2', other: 'Liam Murphy', when: '2026-04-22', messages: 8 },
+    { id: 'm3', other: 'Aiko Tanaka', when: '2026-04-19', messages: 0 },
     { id: 'm4', other: 'Noah Williams', when: '2026-04-12', messages: 41 },
   ];
 
@@ -73,7 +74,7 @@ export default function UserDetail() {
                 content: 'This permanently deletes the account, photos, matches and messages. The action cannot be undone.',
                 okText: 'Delete account',
                 okButtonProps: { danger: true },
-                onOk: () => { message.success(`${user.name} deleted`); navigate('/users'); },
+                onOk: () => { toast.success(`${user.name} deleted`); navigate('/users'); },
               })}
             >
               Delete
@@ -103,9 +104,9 @@ export default function UserDetail() {
             </div>
 
             <div className="p-5 space-y-2.5 text-[13px]">
-              <Detail icon={Mail}     label="Email"  value={user.email} />
-              <Detail icon={Phone}    label="Phone"  value={user.phone} />
-              <Detail icon={MapPin}   label="Loc."   value="Dhaka, Bangladesh" />
+              <Detail icon={Mail} label="Email" value={user.email} />
+              <Detail icon={Phone} label="Phone" value={user.phone} />
+              <Detail icon={MapPin} label="Loc." value="Dhaka, Bangladesh" />
               <Detail icon={Calendar} label="Joined" value={user.joinDate} />
               <Detail icon={ShieldCheck} label="Verified" value="Email · Phone · Photo" />
             </div>
@@ -130,11 +131,11 @@ export default function UserDetail() {
 
           <SectionCard title="Subscription & billing">
             <div className="space-y-3 text-[13px]">
-              <Row k="Current plan"  v={<span className="font-semibold text-gray-900">{user.plan} · monthly</span>} />
-              <Row k="Status"        v={<StatusBadge status="active" />} />
-              <Row k="Next renewal"  v="2026-06-04" />
+              <Row k="Current plan" v={<span className="font-semibold text-gray-900">{user.plan} · monthly</span>} />
+              <Row k="Status" v={<StatusBadge status="active" />} />
+              <Row k="Next renewal" v="2026-06-04" />
               <Row k="Lifetime spend" v="$129.50" />
-              <Row k="Payment"       v="Visa •• 4242" />
+              <Row k="Payment" v="Visa •• 4242" />
             </div>
           </SectionCard>
         </div>

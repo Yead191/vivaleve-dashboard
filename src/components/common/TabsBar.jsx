@@ -1,16 +1,15 @@
 export default function TabsBar({ tabs, value, onChange, rightSlot }) {
   return (
     <div className="flex items-center justify-between border-b border-gray-200 mb-5">
-      <div className="flex items-center gap-1 overflow-x-auto">
+      <div className="flex items-center gap-1 ">
         {tabs.map(t => {
           const active = t.key === value;
           return (
             <button
               key={t.key}
               onClick={() => onChange(t.key)}
-              className={`relative px-4 py-2.5 text-[13px] font-medium transition-colors whitespace-nowrap ${
-                active ? 'text-brand-700' : 'text-gray-500 hover:text-gray-800'
-              }`}
+              className={`relative px-4 py-2.5 text-[13px] font-medium transition-colors whitespace-nowrap ${active ? 'text-brand-700' : 'text-gray-500 hover:text-gray-800'
+                }`}
             >
               <span className="flex items-center gap-2">
                 {t.label}

@@ -16,7 +16,7 @@ export default function BanUserModal({ open, user, onCancel, onConfirm }) {
       okButtonProps={{ danger: true }}
       onOk={handleOk}
       onCancel={onCancel}
-      destroyOnClose
+      centered
     >
       <Alert
         type="error"

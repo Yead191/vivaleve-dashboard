@@ -16,8 +16,8 @@ export default function EditProfileModal({ open, user, onCancel, onSave }) {
       onOk={handleOk}
       onCancel={onCancel}
       okText="Save changes"
-      destroyOnClose
       width={560}
+      centered
     >
       <Form form={form} layout="vertical" initialValues={user || {}}>
         <div className="grid grid-cols-2 gap-3">

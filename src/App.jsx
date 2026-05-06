@@ -2,7 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import AdminLayout from './components/layout/AdminLayout.jsx';
 
 import Dashboard from './pages/Dashboard/index.jsx';
-import UsersList from './pages/Users/UsersList.jsx';
+import UsersList from './pages/Users/index.jsx';
 import UserDetail from './pages/Users/UserDetail.jsx';
 import Moderation from './pages/Moderation/Moderation.jsx';
 import Analytics from './pages/Analytics/Analytics.jsx';
