@@ -90,7 +90,7 @@ export default function AutoModerationTab() {
         okText={editing ? 'Save changes' : 'Create rule'}
         onOk={handleSave}
         onCancel={() => setOpenForm(false)}
-        destroyOnClose
+        centered
       >
         <Form form={form} layout="vertical">
           <Form.Item name="type" label="Rule type" rules={[{ required: true }]} initialValue="keyword">

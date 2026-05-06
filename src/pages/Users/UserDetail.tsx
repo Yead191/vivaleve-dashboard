@@ -15,7 +15,18 @@ import BanUserModal from './BanUserModal';
 import { users, reportsAgainstUsers, User } from '../../data/mockData';
 import { toast } from 'sonner';
 
-const photoColors = ['from-rose-300 to-pink-400', 'from-amber-300 to-orange-400', 'from-emerald-300 to-teal-400', 'from-violet-300 to-purple-400'];
+const photos = [
+  'https://4.bp.blogspot.com/-ZlNJr1vVEWo/V0qVM2RbwhI/AAAAAAAABh4/DvvqVe03WCMh_ZRoUA8lVl3qpoTuNVYmQCLcB/s400/6.jpg',
+  "https://m.media-amazon.com/images/M/MV5BM2Y2OWY1YzMtYmM4Ni00NDU5LTlkMTItMWM0Y2FkNWE5YjZlXkEyXkFqcGc@._V1_.jpg",
+  "https://i.redd.it/rate-this-indonesian-actress-v0-edf74d5g0f8d1.jpg?width=701&format=pjpg&auto=webp&s=6a44c32c45feed39399fdaa7acd35f2c5d86be1f",
+  "https://p3.hippopx.com/preview/1002/877/woman-headscarf-muslim-indonesian-people-beauty-girl.jpg",
+  "https://images.unsplash.com/photo-1521183142708-ee6392033c3e?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8aW5kb25lc2lhbiUyMGdpcmx8ZW58MHx8MHx8fDA%3D",
+  "https://img.freepik.com/premium-photo/beautiful-smiling-asian-woman-black-dress-hijab-looking-camera-with-confident-isolated-white-background_1197599-680.jpg?semt=ais_hybrid&w=740&q=80",
+  "https://i.pinimg.com/736x/fb/5d/d1/fb5dd1701830b228b2c2f0a54f9fa19b.jpg",
+  "https://img.freepik.com/free-photo/close-up-portrait-beautiful-modern-woman-glasses-smiling-looking-happy-posing-eyewear_1258-88373.jpg?semt=ais_hybrid&w=740&q=80"
+
+
+];
 
 export default function UserDetail() {
   const { id } = useParams();
@@ -122,8 +133,8 @@ export default function UserDetail() {
             <div className="p-5 border-t border-gray-100">
               <div className="text-[11px] font-medium uppercase tracking-wider text-gray-400 mb-2">Photos</div>
               <div className="grid grid-cols-4 gap-2">
-                {photoColors.map((c, i) => (
-                  <div key={i} className={`aspect-square rounded-lg bg-gradient-to-br ${c}`} />
+                {photos.map((c, i) => (
+                  <img key={i} src={c} className="aspect-square rounded-lg object-cover " />
                 ))}
               </div>
             </div>

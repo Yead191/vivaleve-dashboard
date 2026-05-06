@@ -16,7 +16,7 @@ export default function FeatureFlagsTab() {
 
   const filtered = flags.filter(f => env === 'all' || f.env === env);
 
-  const openAdd  = () => { setEditing(null); form.resetFields(); setOpen(true); };
+  const openAdd = () => { setEditing(null); form.resetFields(); setOpen(true); };
   const openEdit = (f: FeatureFlag) => { setEditing(f); form.setFieldsValue(f); setOpen(true); };
 
   const save = () => {
@@ -52,15 +52,24 @@ export default function FeatureFlagsTab() {
   };
 
   const cols: ColumnsType<FeatureFlag> = [
-    { title: 'Key', dataIndex: 'key', key: 'key',
-      render: v => <code className="text-[12px] font-medium px-1.5 py-0.5 rounded bg-gray-100 text-gray-800">{v}</code> },
-    { title: 'Description', dataIndex: 'description', key: 'description',
-      render: v => <span className="text-[12px] text-gray-600">{v}</span> },
-    { title: 'Env', dataIndex: 'env', key: 'env', width: 90,
-      render: v => <Tag color={envColors[v]} className="!m-0 !text-[11px] uppercase">{v}</Tag> },
-    { title: 'Status', dataIndex: 'status', key: 'status', width: 100,
-      render: (v, r) => <Switch size="small" checked={v} onChange={(c) => toggleFlag(r, c)} /> },
-    { title: '', key: 'a', width: 100, align: 'right',
+    {
+      title: 'Key', dataIndex: 'key', key: 'key',
+      render: v => <code className="text-[12px] font-medium px-1.5 py-0.5 rounded bg-gray-100 text-gray-800">{v}</code>
+    },
+    {
+      title: 'Description', dataIndex: 'description', key: 'description',
+      render: v => <span className="text-[12px] text-gray-600">{v}</span>
+    },
+    {
+      title: 'Env', dataIndex: 'env', key: 'env', width: 90,
+      render: v => <Tag color={envColors[v]} className="!m-0 !text-[11px] uppercase">{v}</Tag>
+    },
+    {
+      title: 'Status', dataIndex: 'status', key: 'status', width: 100,
+      render: (v, r) => <Switch size="small" checked={v} onChange={(c) => toggleFlag(r, c)} />
+    },
+    {
+      title: '', key: 'a', width: 100, align: 'right',
       render: (_, r) => (
         <div className="flex items-center justify-end gap-1">
           <Button size="small" type="text" icon={<Edit3 className="w-3.5 h-3.5" />} onClick={() => openEdit(r)} />
@@ -82,17 +91,16 @@ export default function FeatureFlagsTab() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1 bg-white rounded-lg border border-gray-200 p-1">
           {[
-            { key: 'all',     label: 'All' },
-            { key: 'dev',     label: 'Dev' },
+            { key: 'all', label: 'All' },
+            { key: 'dev', label: 'Dev' },
             { key: 'staging', label: 'Staging' },
-            { key: 'prod',    label: 'Prod' },
+            { key: 'prod', label: 'Prod' },
           ].map(t => (
             <button
               key={t.key}
               onClick={() => setEnv(t.key)}
-              className={`px-3 py-1.5 text-[12px] font-medium rounded-md transition ${
-                env === t.key ? 'bg-brand-50 text-brand-700' : 'text-gray-600 hover:text-gray-900'
-              }`}
+              className={`px-3 py-1.5 text-[12px] font-medium rounded-md transition ${env === t.key ? 'bg-brand-50 text-brand-700' : 'text-gray-600 hover:text-gray-900'
+                }`}
             >
               {t.label}
             </button>
@@ -112,7 +120,7 @@ export default function FeatureFlagsTab() {
         okText={editing ? 'Save changes' : 'Create flag'}
         onOk={save}
         onCancel={() => setOpen(false)}
-        destroyOnClose
+        centered
       >
         <Form form={form} layout="vertical">
           <Form.Item name="key" label="Key" rules={[{ required: true, pattern: /^[a-z0-9_]+$/, message: 'Lowercase, numbers and underscores only' }]}>
@@ -124,10 +132,10 @@ export default function FeatureFlagsTab() {
           <div className="grid grid-cols-2 gap-3">
             <Form.Item name="env" label="Environment" rules={[{ required: true }]} initialValue="dev">
               <Select options={[
-                { value: 'dev',     label: 'Development' },
+                { value: 'dev', label: 'Development' },
                 { value: 'staging', label: 'Staging' },
-                { value: 'prod',    label: 'Production' },
-              ]}/>
+                { value: 'prod', label: 'Production' },
+              ]} />
             </Form.Item>
             <Form.Item name="status" label="Default value" valuePropName="checked" initialValue={false}>
               <Switch />

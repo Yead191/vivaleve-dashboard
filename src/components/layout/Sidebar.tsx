@@ -21,7 +21,7 @@ export default function Sidebar() {
       </Link>
 
       {/* Nav */}
-      <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
+      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
         <div className="text-[11px] font-medium uppercase tracking-wider text-gray-400 px-3 mb-2">
           General
         </div>
@@ -30,7 +30,7 @@ export default function Sidebar() {
             key={key}
             to={path}
             className={({ isActive }) =>
-              `flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${isActive
+              `flex items-center gap-3 px-3 py-2 2xl:py-3 rounded-lg text-sm 2xl:text-[16px] transition-colors ${isActive
                 ? 'bg-[#429CA8]/10 text-[#429CA8] font-medium'
                 : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
               }`
@@ -38,7 +38,7 @@ export default function Sidebar() {
           >
             {({ isActive }) => (
               <>
-                <Icon className={`w-[18px] h-[18px] ${isActive ? 'text-[#429CA8]' : 'text-gray-400'}`} />
+                <Icon className={`w-[18px] h-[18px] 2xl:w-[22px] 2xl:h-[22px] ${isActive ? 'text-[#429CA8]' : 'text-gray-400'}`} />
                 <span>{label}</span>
               </>
             )}

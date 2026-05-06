@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Search, Bell, } from 'lucide-react';
 import { Badge, Dropdown } from 'antd';
 import { notifications as initialNotifications, Notification } from '../../data/mockData';
 import NotificationDropdown from '../common/NotificationDropdown';
 
 export default function Topbar() {
+  const navigate = useNavigate();
   const [notifications, setNotifications] = useState<Notification[]>(initialNotifications);
 
   const unreadCount = notifications.filter(n => n.unread).length;
@@ -59,7 +61,10 @@ export default function Topbar() {
 
         <div className="w-px h-8 bg-gray-200 mx-2" />
 
-        <button className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg hover:bg-gray-50 transition-colors">
+        <button 
+          onClick={() => navigate('/profile')}
+          className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg hover:bg-gray-50 transition-colors"
+        >
           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white text-sm font-semibold shadow-sm">
             AD
           </div>

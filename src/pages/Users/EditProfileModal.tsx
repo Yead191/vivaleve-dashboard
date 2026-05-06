@@ -32,13 +32,10 @@ export default function EditProfileModal({ open, user, onCancel, onSave }: EditP
           <Form.Item name="name" label="Name" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
-          <Form.Item name="age" label="Age">
-            <InputNumber className="!w-full" min={18} max={120} />
+          <Form.Item name="email" label="Email" rules={[{ type: 'email' }]}>
+            <Input disabled />
           </Form.Item>
         </div>
-        <Form.Item name="email" label="Email" rules={[{ type: 'email' }]}>
-          <Input />
-        </Form.Item>
         <Form.Item name="location" label="Location">
           <Input placeholder="City, Country" />
         </Form.Item>
