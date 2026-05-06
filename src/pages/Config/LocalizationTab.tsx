@@ -91,7 +91,7 @@ export default function LocalizationTab() {
           message.success('String added');
         })}
         onCancel={() => setAddStringOpen(false)}
-        destroyOnClose
+        centered
         width={560}
       >
         <Form form={stringForm} layout="vertical">

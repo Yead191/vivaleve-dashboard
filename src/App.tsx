@@ -6,9 +6,10 @@ import UsersList from './pages/Users/index';
 import UserDetail from './pages/Users/UserDetail';
 import Moderation from './pages/Moderation/Moderation';
 import Analytics from './pages/Analytics/Analytics';
-import Monetization from './pages/Monetization/Monetization';
+import Monetization from './pages/Monetization';
 import Messaging from './pages/Messaging/Messaging';
-import Config from './pages/Config/Config';
+import Config from './pages/Config';
+import Profile from './pages/Profile/Profile';
 
 // Auth Pages
 import Login from './pages/Auth/Login';
@@ -36,6 +37,7 @@ export default function App() {
         <Route path="/monetization" element={<Monetization />} />
         <Route path="/messaging" element={<Messaging />} />
         <Route path="/config" element={<Config />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Route>
     </Routes>

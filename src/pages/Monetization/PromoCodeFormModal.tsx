@@ -43,7 +43,7 @@ export default function PromoCodeFormModal({ open, code, onCancel, onSave }: Pro
       okText={code ? 'Save changes' : 'Create code'}
       onOk={handleOk}
       onCancel={onCancel}
-      destroyOnClose
+      centered
       width={560}
     >
       <Form form={form} layout="vertical" initialValues={{ discountType: 'percent', planRestriction: 'Any' }}>

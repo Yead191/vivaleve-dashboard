@@ -10,20 +10,20 @@ const { RangePicker } = DatePicker;
 export default function PurchasesTab() {
   const { message } = App.useApp();
   const [filters, setFilters] = useState({ plan: 'all', status: 'all' });
-  const [detail, setDetail]   = useState<Purchase | null>(null);
-  const [refund, setRefund]   = useState<Purchase | null>(null);
+  const [detail, setDetail] = useState<Purchase | null>(null);
+  const [refund, setRefund] = useState<Purchase | null>(null);
   const [refundForm] = Form.useForm();
 
   const filtered = useMemo(() => purchases.filter(p =>
-    (filters.plan   === 'all' || p.plan.startsWith(filters.plan)) &&
+    (filters.plan === 'all' || p.plan.startsWith(filters.plan)) &&
     (filters.status === 'all' || p.status === filters.status)
   ), [filters]);
 
   const cols: ColumnsType<Purchase> = [
-    { title: 'User',   dataIndex: 'user',   key: 'user',   render: v => <span className="text-[13px] font-medium text-gray-900">{v}</span> },
-    { title: 'Plan',   dataIndex: 'plan',   key: 'plan',   render: v => <span className="text-[12px] text-gray-700">{v}</span> },
+    { title: 'User', dataIndex: 'user', key: 'user', render: v => <span className="text-[13px] font-medium text-gray-900">{v}</span> },
+    { title: 'Plan', dataIndex: 'plan', key: 'plan', render: v => <span className="text-[12px] text-gray-700">{v}</span> },
     { title: 'Amount', dataIndex: 'amount', key: 'amount', width: 100, render: v => <span className="text-[12px] font-semibold text-gray-900">{v}</span> },
-    { title: 'Date',   dataIndex: 'date',   key: 'date',   width: 120, render: v => <span className="text-[12px] text-gray-500">{v}</span> },
+    { title: 'Date', dataIndex: 'date', key: 'date', width: 120, render: v => <span className="text-[12px] text-gray-500">{v}</span> },
     { title: 'Method', dataIndex: 'method', key: 'method', render: v => <span className="text-[12px] text-gray-700">{v}</span> },
     { title: 'Status', dataIndex: 'status', key: 'status', width: 110, render: v => <StatusBadge status={v} /> },
     {
@@ -45,18 +45,18 @@ export default function PurchasesTab() {
         <Select
           value={filters.plan} onChange={v => setFilters({ ...filters, plan: v })} className="!w-44"
           options={[
-            { value: 'all',      label: 'All plans' },
-            { value: 'Plus',     label: 'Plus' },
-            { value: 'Premium',  label: 'Premium' },
+            { value: 'all', label: 'All plans' },
+            { value: 'Plus', label: 'Plus' },
+            { value: 'Premium', label: 'Premium' },
           ]}
         />
         <Select
           value={filters.status} onChange={v => setFilters({ ...filters, status: v })} className="!w-44"
           options={[
-            { value: 'all',      label: 'All statuses' },
-            { value: 'paid',     label: 'Paid' },
+            { value: 'all', label: 'All statuses' },
+            { value: 'paid', label: 'Paid' },
             { value: 'refunded', label: 'Refunded' },
-            { value: 'failed',   label: 'Failed' },
+            { value: 'failed', label: 'Failed' },
           ]}
         />
         <RangePicker className="!w-64" placeholder={['Date from', 'to']} />
@@ -70,16 +70,16 @@ export default function PurchasesTab() {
       </div>
 
       {/* Detail modal */}
-      <Modal open={!!detail} title="Purchase detail" footer={null} onCancel={() => setDetail(null)} width={520} destroyOnClose>
+      <Modal open={!!detail} title="Purchase detail" footer={null} onCancel={() => setDetail(null)} width={520} centered>
         {detail && (
           <div className="space-y-3 text-[13px]">
             <Field k="Transaction ID" v={<code className="px-1.5 py-0.5 rounded bg-gray-100 text-[12px]">{detail.id}</code>} />
-            <Field k="User"     v={detail.user} />
-            <Field k="Plan"     v={detail.plan} />
-            <Field k="Amount"   v={<span className="font-semibold text-gray-900">{detail.amount}</span>} />
-            <Field k="Date"     v={detail.date} />
-            <Field k="Method"   v={detail.method} />
-            <Field k="Status"   v={<StatusBadge status={detail.status} />} />
+            <Field k="User" v={detail.user} />
+            <Field k="Plan" v={detail.plan} />
+            <Field k="Amount" v={<span className="font-semibold text-gray-900">{detail.amount}</span>} />
+            <Field k="Date" v={detail.date} />
+            <Field k="Method" v={detail.method} />
+            <Field k="Status" v={<StatusBadge status={detail.status} />} />
             <div className="pt-3 border-t border-gray-100">
               <div className="text-[11px] uppercase tracking-wider text-gray-400 font-medium mb-1.5">Receipt</div>
               <p className="text-[13px] text-gray-700">Receipt sent to user's verified email at {detail.date}.</p>

@@ -53,7 +53,7 @@ export default function PlanFormModal({ open, plan, onCancel, onSave }: PlanForm
       okText={plan ? 'Save changes' : 'Create plan'}
       onOk={handleOk}
       onCancel={onCancel}
-      destroyOnClose
+      centered
       width={620}
     >
       <Form form={form} layout="vertical" initialValues={{ currency: 'USD', cycle: 'monthly', trialDays: 7 }}>

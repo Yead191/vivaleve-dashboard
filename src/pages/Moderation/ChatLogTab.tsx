@@ -8,24 +8,25 @@ import { ColumnsType } from 'antd/es/table';
 export default function ChatLogTab() {
   const { message } = App.useApp();
   const [requestOpen, setRequestOpen] = useState(false);
-  const [thread, setThread]           = useState<any | null>(null);
+  const [thread, setThread] = useState<any | null>(null);
   const [form] = Form.useForm();
 
   const fakeThread = [
     { from: 'A', body: 'Hey! Loved your photo from the Sundarbans hike.', when: '2026-04-30 14:02' },
-    { from: 'B', body: 'Thanks! It was a long day but worth it 😄',          when: '2026-04-30 14:11' },
-    { from: 'A', body: 'Would you ever do another one this summer?',         when: '2026-04-30 14:14' },
-    { from: 'B', body: 'Maybe! What did you have in mind?',                  when: '2026-04-30 14:18' },
-    { from: 'A', body: '[Flagged · external contact] Add me on telegram?',   when: '2026-04-30 14:22', flagged: true },
+    { from: 'B', body: 'Thanks! It was a long day but worth it 😄', when: '2026-04-30 14:11' },
+    { from: 'A', body: 'Would you ever do another one this summer?', when: '2026-04-30 14:14' },
+    { from: 'B', body: 'Maybe! What did you have in mind?', when: '2026-04-30 14:18' },
+    { from: 'A', body: '[Flagged · external contact] Add me on telegram?', when: '2026-04-30 14:22', flagged: true },
   ];
 
   const cols: ColumnsType<any> = [
-    { title: 'User pair',       dataIndex: 'pair',           key: 'pair',           render: v => <span className="text-[13px] font-medium text-gray-900">{v}</span> },
+    { title: 'User pair', dataIndex: 'pair', key: 'pair', render: v => <span className="text-[13px] font-medium text-gray-900">{v}</span> },
     { title: 'Conversation ID', dataIndex: 'conversationId', key: 'conversationId', render: v => <code className="text-[12px] px-1.5 py-0.5 rounded bg-gray-100">{v}</code> },
-    { title: 'Accessed by',     dataIndex: 'accessedBy',     key: 'accessedBy',     render: v => <span className="text-[12px] text-gray-700">{v}</span> },
-    { title: 'When',            dataIndex: 'accessedAt',     key: 'accessedAt',     render: v => <span className="text-[12px] text-gray-500">{v}</span> },
-    { title: 'Reason',          dataIndex: 'reason',         key: 'reason',         render: v => <span className="text-[12px] text-gray-600">{v}</span> },
-    { title: '', key: 'a', width: 110, align: 'right',
+    { title: 'Accessed by', dataIndex: 'accessedBy', key: 'accessedBy', render: v => <span className="text-[12px] text-gray-700">{v}</span> },
+    { title: 'When', dataIndex: 'accessedAt', key: 'accessedAt', render: v => <span className="text-[12px] text-gray-500">{v}</span> },
+    { title: 'Reason', dataIndex: 'reason', key: 'reason', render: v => <span className="text-[12px] text-gray-600">{v}</span> },
+    {
+      title: '', key: 'a', width: 110, align: 'right',
       render: (_, r) => <Button size="small" onClick={() => setThread(r)}>View thread</Button>,
     },
   ];
@@ -64,7 +65,7 @@ export default function ChatLogTab() {
           form.resetFields();
         })}
         onCancel={() => setRequestOpen(false)}
-        destroyOnClose
+        centered
       >
         <Form form={form} layout="vertical">
           <Form.Item name="conversationId" label="Conversation ID" rules={[{ required: true }]}>
@@ -88,9 +89,8 @@ export default function ChatLogTab() {
         <div className="space-y-2 max-h-[400px] overflow-y-auto pr-1">
           {fakeThread.map((m, i) => (
             <div key={i} className={`flex ${m.from === 'A' ? 'justify-start' : 'justify-end'}`}>
-              <div className={`max-w-[75%] rounded-2xl px-3 py-2 ${
-                m.from === 'A' ? 'bg-gray-100 text-gray-900' : 'bg-brand-500 text-white'
-              } ${m.flagged ? 'ring-2 ring-rose-300' : ''}`}>
+              <div className={`max-w-[75%] rounded-2xl px-3 py-2 ${m.from === 'A' ? 'bg-gray-100 text-gray-900' : 'bg-brand-500 text-white'
+                } ${m.flagged ? 'ring-2 ring-rose-300' : ''}`}>
                 <p className="text-[13px] leading-relaxed">{m.body}</p>
                 <div className="text-[10px] opacity-70 mt-1">{m.when}</div>
               </div>
