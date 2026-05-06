@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --brand: #429CA8;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  background: #f7f8fa;
+  color: #111827;
+}
+
+/* Override antd primary in places where ConfigProvider doesn't reach (rare) */
+.ant-btn-primary {
+  box-shadow: none !important;
+}
+
+/* Prettier scrollbars in the admin shell */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d6dadf;
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #b6bcc4;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
