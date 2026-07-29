@@ -5,7 +5,6 @@
 // Dashboard
 export interface Stat {
   value: string;
-  delta: string;
   dir: 'up' | 'down';
   sub: string;
 }
@@ -20,12 +19,12 @@ export interface DashboardStats {
 }
 
 export const dashboardStats: DashboardStats = {
-  totalUsers:      { value: '128,492', delta: '+4.2%', dir: 'up',   sub: 'vs last month' },
-  dau:             { value: '42,109',  delta: '+1.1%', dir: 'up',   sub: 'today' },
-  newSignupsToday: { value: '1,248',   delta: '+8.7%', dir: 'up',   sub: 'today' },
-  totalMatches:    { value: '2.4M',    delta: '+0.6%', dir: 'up',   sub: 'all time' },
-  openReports:     { value: '37',      delta: '-12%',  dir: 'down', sub: 'pending review' },
-  monthlyRevenue:  { value: '$184,720',delta: '+9.4%', dir: 'up',   sub: 'this month' },
+  totalUsers:      { value: '128,492',  dir: 'up',   sub: 'vs last month' },
+  dau:             { value: '42,109',   dir: 'up',   sub: 'today' },
+  newSignupsToday: { value: '1,248',    dir: 'up',   sub: 'today' },
+  totalMatches:    { value: '2.4M',     dir: 'up',   sub: 'all time' },
+  openReports:     { value: '37',       dir: 'down', sub: 'pending review' },
+  monthlyRevenue:  { value: '$184,720', dir: 'up',   sub: 'this month' },
 };
 
 const days30 = Array.from({ length: 30 }, (_, i) => `D${i + 1}`);

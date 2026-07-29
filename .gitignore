@@ -5,3 +5,4 @@ temp_interactive_push.bat
 .gitignore
 branch_structure.json
 config.bat
+.env

@@ -2,13 +2,18 @@ import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { LogOut } from 'lucide-react';
 import { navConfig } from '../../routes/navConfig';
 import { toast } from 'sonner';
+import { useAppDispatch } from '../../redux/hooks';
+import { api } from '../../redux/api/baseApi';
+import { clearAuthTokens } from '../../redux/api/authStorage';
 
 export default function Sidebar() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   const handleLogout = () => {
-    // Logic to clear auth session would go here
-    navigate('/login');
+    clearAuthTokens();
+    dispatch(api.util.resetApiState());
+    navigate('/auth/login', { replace: true });
     toast.success("Logged out successfully!");
   };
 

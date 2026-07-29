@@ -1,18 +1,63 @@
-import React from 'react';
-import { Form, Input, Button, Checkbox, } from 'antd';
+import { Form, Input, Button, Checkbox } from 'antd';
 import { Mail, Lock, ArrowRight } from 'lucide-react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import AuthLayout from './AuthLayout';
 import { toast } from 'sonner';
+import { useLoginMutation, type LoginRequest } from '../../redux/apiSlices/authApi';
+import { markAuthenticationActive } from '../../redux/api/baseApi';
+import { saveAccessToken, saveRefreshToken } from '../../redux/api/authStorage';
+
+interface LoginFormValues extends LoginRequest {
+  remember?: boolean;
+}
+
+const getErrorMessage = (error: unknown) => {
+  if (!error || typeof error !== 'object') {
+    return 'Unable to sign in. Please try again.';
+  }
+
+  const errorRecord = error as Record<string, unknown>;
+  const data = errorRecord.data;
+
+  if (data && typeof data === 'object') {
+    const message = (data as Record<string, unknown>).message;
+    if (typeof message === 'string') {
+      return message;
+    }
+  }
+
+  if (typeof errorRecord.message === 'string') {
+    return errorRecord.message;
+  }
+
+  return 'Unable to sign in. Please check your credentials.';
+};
 
 export default function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [form] = Form.useForm();
+  const [login, { isLoading }] = useLoginMutation();
 
-  const onFinish = (values: any) => {
-    console.log('Login values:', values);
-    toast.success('Successfully logged in!');
-    navigate('/dashboard');
+  const onFinish = async ({ email, password, remember }: LoginFormValues) => {
+    try {
+      const session = await login({ email, password }).unwrap();
+
+      saveAccessToken(session.accessToken);
+      if (session.refreshToken) {
+        saveRefreshToken(session.refreshToken, remember);
+      }
+      markAuthenticationActive();
+
+      const redirectPath =
+        (location.state as { from?: { pathname?: string } } | null)?.from
+          ?.pathname ?? '/dashboard';
+
+      toast.success('Successfully logged in!');
+      navigate(redirectPath, { replace: true });
+    } catch (error) {
+      toast.error(getErrorMessage(error));
+    }
   };
 
   return (
@@ -67,6 +112,7 @@ export default function Login() {
           <Button
             type="primary"
             htmlType="submit"
+            loading={isLoading}
             className="w-full h-12 bg-[#429CA8] hover:bg-[#367d87] rounded-xl text-sm font-bold flex items-center justify-center gap-2 border-none shadow-lg shadow-[#429CA8]/20 mt-2"
           >
             Sign In

@@ -1,7 +1,7 @@
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell } from 'recharts';
 
 interface BarChartCardProps {
-  data: any[];
+  data: object[];
   dataKey?: string;
   xKey?: string;
   height?: number | string;

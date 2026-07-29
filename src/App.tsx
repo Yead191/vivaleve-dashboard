@@ -10,6 +10,7 @@ import Monetization from './pages/Monetization';
 import Messaging from './pages/Messaging/Messaging';
 import Config from './pages/Config';
 import Profile from './pages/Profile/Profile';
+import ProtectedRoute from './components/auth/ProtectedRoute';
 
 // Auth Pages
 import Login from './pages/Auth/Login';
@@ -21,24 +22,27 @@ export default function App() {
   return (
     <Routes>
       {/* Auth Routes */}
-      <Route path="/login" element={<Login />} />
+      <Route path="/auth/login" element={<Login />} />
+      <Route path="/login" element={<Navigate to="/auth/login" replace />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/verify-otp" element={<VerifyOtp />} />
       <Route path="/reset-password" element={<ResetPassword />} />
 
       {/* Admin Protected Routes */}
-      <Route element={<AdminLayout />}>
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/users" element={<UsersList />} />
-        <Route path="/users/:id" element={<UserDetail />} />
-        <Route path="/moderation" element={<Moderation />} />
-        <Route path="/analytics" element={<Analytics />} />
-        <Route path="/monetization" element={<Monetization />} />
-        <Route path="/messaging" element={<Messaging />} />
-        <Route path="/config" element={<Config />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+      <Route element={<ProtectedRoute />}>
+        <Route element={<AdminLayout />}>
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/users" element={<UsersList />} />
+          <Route path="/users/:id" element={<UserDetail />} />
+          <Route path="/moderation" element={<Moderation />} />
+          <Route path="/analytics" element={<Analytics />} />
+          <Route path="/monetization" element={<Monetization />} />
+          {/* <Route path="/messaging" element={<Messaging />} /> */}
+          <Route path="/config" element={<Config />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        </Route>
       </Route>
     </Routes>
   );

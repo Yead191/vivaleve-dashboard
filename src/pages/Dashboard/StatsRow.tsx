@@ -1,17 +1,61 @@
-import { Users, Activity, UserPlus, Heart, Flag, DollarSign } from 'lucide-react';
-import StatCard from '../../components/common/StatCard';
-import { dashboardStats } from '../../data/mockData';
+import { Users, Activity, UserPlus, Heart, Flag } from "lucide-react";
+import StatCard from "../../components/common/StatCard";
+import { useGetOverviewQuery } from "../../redux/apiSlices/overviewApi";
 
 export default function StatsRow() {
-  const s = dashboardStats;
+  const { data, isLoading, isError } = useGetOverviewQuery();
+  const value = (stat: number | undefined) =>
+    isLoading ? "..." : (stat?.toLocaleString() ?? "--");
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6 gap-4">
-      <StatCard label="Total users" value={s.totalUsers.value} delta={s.totalUsers.delta} deltaDir={s.totalUsers.dir} sub={s.totalUsers.sub} icon={Users} tone="brand" />
-      <StatCard label="Active today (DAU)" value={s.dau.value} delta={s.dau.delta} deltaDir={s.dau.dir} sub={s.dau.sub} icon={Activity} tone="indigo" />
-      <StatCard label="New signups today" value={s.newSignupsToday.value} delta={s.newSignupsToday.delta} deltaDir={s.newSignupsToday.dir} sub={s.newSignupsToday.sub} icon={UserPlus} tone="green" />
-      <StatCard label="Total matches made" value={s.totalMatches.value} delta={s.totalMatches.delta} deltaDir={s.totalMatches.dir} sub={s.totalMatches.sub} icon={Heart} tone="rose" />
-      <StatCard label="Open reports" value={s.openReports.value} delta={s.openReports.delta} deltaDir={s.openReports.dir} sub={s.openReports.sub} icon={Flag} tone="amber" />
-      <StatCard label="Revenue this month" value={s.monthlyRevenue.value} delta={s.monthlyRevenue.delta} deltaDir={s.monthlyRevenue.dir} sub={s.monthlyRevenue.sub} icon={DollarSign} tone="green" />
+    <div>
+      {isError && (
+        <p className="mb-3 text-sm text-rose-600">
+          Unable to load dashboard overview.
+        </p>
+      )}
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+        <StatCard
+          label="Total users"
+          value={value(data?.totalUser)}
+          sub="all users"
+          icon={Users}
+          tone="brand"
+        />
+
+        <StatCard
+          label="Active today"
+          value={value(data?.activeToday)}
+          sub="today"
+          icon={Activity}
+          tone="indigo"
+        />
+
+        <StatCard
+          label="New signups"
+          value={value(data?.newSignupUser)}
+          sub="new users"
+          icon={UserPlus}
+          tone="green"
+        />
+
+        <StatCard
+          label="Total matches made"
+          value={value(data?.totalMatchesUser)}
+          sub="all time"
+          icon={Heart}
+          tone="rose"
+        />
+
+        <StatCard
+          label="Open reports"
+          value={value(data?.openReport)}
+          sub="pending review"
+          icon={Flag}
+          tone="amber"
+        />
+      </div>
     </div>
   );
 }
