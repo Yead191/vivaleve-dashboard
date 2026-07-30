@@ -5,6 +5,7 @@ import Dashboard from './pages/Dashboard/index';
 import UsersList from './pages/Users/index';
 import UserDetail from './pages/Users/UserDetail';
 import Moderation from './pages/Moderation/Moderation';
+import PostDetail from './pages/Moderation/PostDetail';
 import Analytics from './pages/Analytics/Analytics';
 import Monetization from './pages/Monetization';
 import Content from './pages/Content';
@@ -37,6 +38,7 @@ export default function App() {
           <Route path="/users" element={<UsersList />} />
           <Route path="/users/:id" element={<UserDetail />} />
           <Route path="/moderation" element={<Moderation />} />
+          <Route path="/posts/:id" element={<PostDetail />} />
           <Route path="/analytics" element={<Analytics />} />
           <Route path="/monetization" element={<Monetization />} />
           <Route path="/content" element={<Content />} />

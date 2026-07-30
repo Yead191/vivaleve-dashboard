@@ -140,6 +140,7 @@ export const api = createApi({
     "Overview",
     "Package",
     "Rule",
+    "Post",
   ],
   endpoints: () => ({}),
 });

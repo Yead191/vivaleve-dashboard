@@ -223,3 +223,33 @@ export function ContentPageSkeleton() {
     </div>
   );
 }
+
+export function PostDetailSkeleton() {
+  return (
+    <div className="space-y-6">
+      <Skeleton.Input active size="small" style={{ width: 72 }} />
+      <div className="space-y-2">
+        <Skeleton.Input active size="small" style={{ width: 160 }} />
+        <Skeleton.Input active size="large" style={{ width: 260 }} />
+        <Skeleton.Input active size="small" style={{ width: 200 }} />
+      </div>
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
+        <div className="space-y-6 xl:col-span-2">
+          <div className="rounded-xl border border-gray-200 bg-white p-5">
+            <Skeleton.Image active className="!w-full !h-72" />
+          </div>
+        </div>
+        <div className="rounded-xl border border-gray-200 bg-white p-5">
+          <div className="flex items-center gap-3">
+            <Skeleton.Avatar active size={48} />
+            <div className="flex-1 space-y-2">
+              <Skeleton.Input active size="small" style={{ width: 140 }} />
+              <Skeleton.Input active size="small" style={{ width: 180 }} />
+            </div>
+          </div>
+          <Skeleton.Button active block style={{ marginTop: 20, height: 36 }} />
+        </div>
+      </div>
+    </div>
+  );
+}

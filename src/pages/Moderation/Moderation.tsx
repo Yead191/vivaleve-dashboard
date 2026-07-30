@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Button, Image, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
+import { Eye } from "lucide-react";
 import { toast } from "sonner";
 import PageHeader from "../../components/common/PageHeader";
 import StatusBadge from "../../components/common/StatusBadge";
@@ -95,11 +97,14 @@ export default function Moderation() {
       title: "Post ID",
       dataIndex: "postId",
       key: "postId",
-      width: 130,
+      width: 150,
       render: (postId: string) => (
-        <span className="font-mono text-[11px] text-gray-600">
+        <Link
+          to={`/posts/${postId}`}
+          className="font-mono text-[11px] font-medium text-[#287D89] hover:underline"
+        >
           …{postId.slice(-8)}
-        </span>
+        </Link>
       ),
     },
     {
@@ -123,8 +128,17 @@ export default function Moderation() {
     {
       title: "Action",
       key: "action",
-      width: 210,
-      render: (_, report) => <ReportStatusControl report={report} />,
+      width: 280,
+      render: (_, report) => (
+        <div className="flex flex-wrap items-center gap-2">
+          <Link to={`/posts/${report.postId}`}>
+            <Button size="small" icon={<Eye className="h-3.5 w-3.5" />}>
+              View post
+            </Button>
+          </Link>
+          <ReportStatusControl report={report} />
+        </div>
+      ),
     },
   ];
 
@@ -143,7 +157,7 @@ export default function Moderation() {
             dataSource={reports?.data ?? []}
             columns={columns}
             rowKey="_id"
-            scroll={{ x: 970 }}
+            scroll={{ x: 1040 }}
             locale={{
               emptyText: isError
                 ? "Unable to load reports."
