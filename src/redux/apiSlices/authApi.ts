@@ -5,19 +5,22 @@ export interface LoginRequest {
   password: string;
 }
 
+export interface ChangePasswordRequest {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
+interface ChangePasswordResponse {
+  success: boolean;
+  message: string;
+}
+
 export interface AuthSession {
   accessToken: string;
   refreshToken?: string;
   role?: string;
   onboardingComplete?: boolean;
-}
-
-export interface UserProfile {
-  id: string;
-  email: string;
-  name?: string;
-  role?: string;
-  [key: string]: unknown;
 }
 
 const unwrapData = <T>(response: T | { data: T }): T => {
@@ -55,16 +58,14 @@ export const authApi = api.injectEndpoints({
       transformResponse: normalizeAuthSession,
       invalidatesTags: ["Auth", "User", "AdminData"],
     }),
-    profile: builder.query<UserProfile, void>({
-      query: () => ({
-        url: "/user/profile",
-        method: "GET",
+    changePassword: builder.mutation<ChangePasswordResponse, ChangePasswordRequest>({
+      query: (body) => ({
+        url: "/auth/change-password",
+        method: "POST",
+        body,
       }),
-      transformResponse: (response: UserProfile | { data: UserProfile }) =>
-        unwrapData(response),
-      providesTags: ["Auth", "User", "AdminData"],
     }),
   }),
 });
 
-export const { useLoginMutation, useProfileQuery } = authApi;
+export const { useLoginMutation, useChangePasswordMutation } = authApi;

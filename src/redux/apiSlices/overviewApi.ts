@@ -97,6 +97,38 @@ interface RecentSubscriptionsResponse {
   data: RecentSubscription[];
 }
 
+export interface DashboardUser {
+  _id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  status: string;
+  profile: string;
+  premiumMembership: boolean;
+  isBanned: boolean;
+  verified: boolean;
+  onboardingComplete: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface UserListPagination {
+  total: number;
+  limit: number;
+  page: number;
+  totalPage: number;
+}
+
+export interface UserListResult {
+  data: DashboardUser[];
+  pagination: UserListPagination;
+}
+
+interface UserListResponse extends UserListResult {
+  success: boolean;
+  message: string;
+}
+
 const overviewApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getOverview: builder.query<OverviewData, void>({
@@ -153,6 +185,18 @@ const overviewApi = api.injectEndpoints({
         response.data,
       providesTags: ["Overview"],
     }),
+    getUserList: builder.query<UserListResult, number>({
+      query: (page) => ({
+        url: "/dashboard/user-list",
+        method: "GET",
+        params: { page },
+      }),
+      transformResponse: ({ data, pagination }: UserListResponse) => ({
+        data,
+        pagination,
+      }),
+      providesTags: ["User"],
+    }),
   }),
 });
 
@@ -163,4 +207,6 @@ export const {
   useGetRecentSignupUsersQuery,
   useGetRecentReportsQuery,
   useGetRecentSubscriptionsQuery,
+  useGetUserListQuery,
+  useLazyGetUserListQuery,
 } = overviewApi;

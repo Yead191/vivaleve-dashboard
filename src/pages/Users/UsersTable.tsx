@@ -1,69 +1,121 @@
 import { Link } from 'react-router-dom';
-import { Table, Dropdown, Button } from 'antd';
-import { MoreVertical, Eye, Pause, Ban, CheckCircle2, FileText, UserCog } from 'lucide-react';
+import { Button, Table } from 'antd';
+import { Ban, Eye } from 'lucide-react';
+import type { ColumnsType } from 'antd/es/table';
 import UserCell from '../../components/common/UserCell';
 import StatusBadge from '../../components/common/StatusBadge';
 import { User } from '../../data/mockData';
-import { ColumnsType } from 'antd/es/table';
 
 interface UsersTableProps {
   data: User[];
-  onAction: (key: string, user: User) => void;
+  onBan: (user: User) => void;
+  banningUserId?: string | null;
+  loading?: boolean;
+  currentPage: number;
+  pageSize: number;
+  total: number;
+  onPageChange: (page: number) => void;
+  isError?: boolean;
 }
 
-export default function UsersTable({ data, onAction }: UsersTableProps) {
+export default function UsersTable({
+  data,
+  onBan,
+  banningUserId,
+  loading,
+  currentPage,
+  pageSize,
+  total,
+  onPageChange,
+  isError,
+}: UsersTableProps) {
   const columns: ColumnsType<User> = [
     {
       title: 'User',
       dataIndex: 'name',
       key: 'name',
+      width: 240,
+      fixed: 'left',
       sorter: (a, b) => a.name.localeCompare(b.name),
-      render: (_, r) => (
-        <Link to={`/users/${r.id}`}>
-          <UserCell name={r.name} email={r.email} />
-        </Link>
+      render: (_, row) => <UserCell name={row.name} email={row.email} />,
+    },
+    {
+      title: 'Phone',
+      dataIndex: 'phone',
+      key: 'phone',
+      width: 130,
+      render: (value) => (
+        <span className="text-[12px] text-gray-600">{value}</span>
       ),
     },
-    { title: 'Phone', dataIndex: 'phone', key: 'phone', render: v => <span className="text-[12px] text-gray-600">{v}</span> },
-    { title: 'Joined', dataIndex: 'joinDate', key: 'joinDate', sorter: (a, b) => a.joinDate.localeCompare(b.joinDate), render: v => <span className="text-[12px] text-gray-600">{v}</span> },
-    { title: 'Last active', dataIndex: 'lastActive', key: 'lastActive', render: v => <span className="text-[12px] text-gray-600">{v}</span> },
-    { title: 'Status', dataIndex: 'status', key: 'status', render: v => <StatusBadge status={v} /> },
-    { title: 'Plan', dataIndex: 'plan', key: 'plan', render: v => <span className="text-[12px] font-medium text-gray-800">{v}</span> },
     {
-      title: 'Reports', dataIndex: 'reports', key: 'reports', sorter: (a, b) => a.reports - b.reports,
-      render: v => v > 0
-        ? <span className="inline-flex items-center justify-center min-w-[24px] h-5 px-1.5 rounded-full bg-rose-50 text-rose-700 text-[11px] font-medium">{v}</span>
-        : <span className="text-[12px] text-gray-400">—</span>,
+      title: 'Joined',
+      dataIndex: 'joinDate',
+      key: 'joinDate',
+      width: 120,
+      sorter: (a, b) => a.joinDate.localeCompare(b.joinDate),
+      render: (value) => (
+        <span className="text-[12px] text-gray-600">{value}</span>
+      ),
     },
     {
-      title: '', key: 'actions', fixed: 'right',
-      render: (_, r) => {
-        const items = [
-          { key: 'view', icon: <Eye className="w-4 h-4" />, label: <Link to={`/users/${r.id}`}>View profile</Link> },
-          { key: 'reports', icon: <FileText className="w-4 h-4" />, label: 'View reports' },
-          { key: 'impersonate', icon: <UserCog className="w-4 h-4" />, label: 'Impersonate' },
-          { type: 'divider' } as any,
-          ...(r.status === 'active' ? [
-            { key: 'suspend', icon: <Pause className="w-4 h-4" />, label: 'Suspend' },
-            { key: 'ban', icon: <Ban className="w-4 h-4" />, label: 'Ban', danger: true },
-          ] : [
-            { key: 'activate', icon: <CheckCircle2 className="w-4 h-4" />, label: 'Activate' },
-          ]),
-        ];
-
-        return (
-          <Dropdown
-            menu={{
-              items,
-              onClick: ({ key }) => onAction(key, r),
-            }}
-            trigger={['click']}
-            placement="bottomRight"
-          >
-            <Button type="text" icon={<MoreVertical className="w-4 h-4" />} />
-          </Dropdown>
-        );
-      },
+      title: 'Updated',
+      dataIndex: 'lastActive',
+      key: 'lastActive',
+      width: 120,
+      render: (value) => (
+        <span className="text-[12px] text-gray-600">{value}</span>
+      ),
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+      width: 110,
+      render: (value) => <StatusBadge status={value} />,
+    },
+    {
+      title: 'Plan',
+      dataIndex: 'plan',
+      key: 'plan',
+      width: 100,
+      render: (plan: string) => (
+        <span
+          className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium ${
+            plan === 'Premium'
+              ? 'bg-amber-50 text-amber-700 ring-1 ring-amber-200'
+              : 'bg-gray-100 text-gray-600'
+          }`}
+        >
+          {plan}
+        </span>
+      ),
+    },
+    {
+      title: 'Actions',
+      key: 'actions',
+      fixed: 'right',
+      width: 180,
+      render: (_, row) => (
+        <div className="flex flex-wrap items-center justify-end gap-2">
+          <Link to={`/users/${row.id}`}>
+            <Button size="small" icon={<Eye className="h-3.5 w-3.5" />}>
+              Details
+            </Button>
+          </Link>
+          {row.status !== 'banned' && (
+            <Button
+              size="small"
+              danger
+              icon={<Ban className="h-3.5 w-3.5" />}
+              loading={banningUserId === row.id}
+              onClick={() => onBan(row)}
+            >
+              Ban
+            </Button>
+          )}
+        </div>
+      ),
     },
   ];
 
@@ -72,8 +124,18 @@ export default function UsersTable({ data, onAction }: UsersTableProps) {
       dataSource={data}
       columns={columns}
       rowKey="id"
-      pagination={{ pageSize: 10, showSizeChanger: false }}
-
+      loading={loading}
+      scroll={{ x: 980 }}
+      locale={{
+        emptyText: isError ? 'Unable to load users.' : 'No users found.',
+      }}
+      pagination={{
+        current: currentPage,
+        pageSize,
+        total,
+        showSizeChanger: false,
+        onChange: onPageChange,
+      }}
     />
   );
 }

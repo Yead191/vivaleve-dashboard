@@ -39,5 +39,5 @@ export const navConfig: NavItem[] = [
     icon: DollarSign,
   },
   // { key: 'messaging',    label: 'Messaging',     path: '/messaging',    icon: Bell },
-  { key: "config", label: "App Config", path: "/config", icon: Settings },
+  // { key: "config", label: "App Config", path: "/config", icon: Settings },
 ];

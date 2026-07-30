@@ -19,7 +19,8 @@
     "react-redux": "^9.3.0",
     "react-router-dom": "^6.24.0",
     "recharts": "^2.12.7",
-    "sonner": "^2.0.7"
+    "sonner": "^2.0.7",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@types/js-cookie": "^3.0.6",

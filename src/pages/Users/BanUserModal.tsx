@@ -4,11 +4,18 @@ import { User } from '../../data/mockData';
 interface BanUserModalProps {
   open: boolean;
   user: User | null;
+  loading?: boolean;
   onCancel: () => void;
   onConfirm: (values: { user: User | null; reason: string }) => void;
 }
 
-export default function BanUserModal({ open, user, onCancel, onConfirm }: BanUserModalProps) {
+export default function BanUserModal({
+  open,
+  user,
+  loading = false,
+  onCancel,
+  onConfirm,
+}: BanUserModalProps) {
   const [form] = Form.useForm();
   const handleOk = () => {
     form.validateFields().then(values => {
@@ -21,7 +28,7 @@ export default function BanUserModal({ open, user, onCancel, onConfirm }: BanUse
       open={open}
       title={`Ban ${user?.name || 'user'} permanently`}
       okText="Ban permanently"
-      okButtonProps={{ danger: true }}
+      okButtonProps={{ danger: true, loading }}
       onOk={handleOk}
       onCancel={onCancel}
       centered

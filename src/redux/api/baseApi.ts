@@ -138,6 +138,7 @@ export const api = createApi({
     "Banner",
     "Notification",
     "Overview",
+    "Package",
   ],
   endpoints: () => ({}),
 });

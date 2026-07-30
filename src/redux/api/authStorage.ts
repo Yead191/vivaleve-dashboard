@@ -29,4 +29,12 @@ export const clearAuthTokens = () => {
   localStorage.removeItem(ACCESS_TOKEN_KEY);
   localStorage.removeItem(REFRESH_TOKEN_KEY);
   Cookies.remove(REFRESH_TOKEN_KEY);
+  Cookies.remove(REFRESH_TOKEN_KEY, { path: "/" });
+};
+
+/** Clears auth tokens, cookies, and all browser storage used by the app session. */
+export const clearAllStoredAuthData = () => {
+  clearAuthTokens();
+  localStorage.clear();
+  sessionStorage.clear();
 };

@@ -1,66 +1,107 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { App, Button, Tag } from 'antd';
 import {
-  ArrowLeft, Edit3, Pause, Ban, Trash2, Plus, MapPin, Mail, Phone, Calendar, ShieldCheck,
+  ArrowLeft, Ban, MapPin, Mail, Phone, Calendar, ShieldCheck,
 } from 'lucide-react';
 import PageHeader from '../../components/common/PageHeader';
 import SectionCard from '../../components/common/SectionCard';
 import StatusBadge from '../../components/common/StatusBadge';
-import UserCell from '../../components/common/UserCell';
-import EditProfileModal from './EditProfileModal';
-import AddNoteModal from './AddNoteModal';
-import SuspendUserModal from './SuspendUserModal';
-import BanUserModal from './BanUserModal';
-import { users, reportsAgainstUsers, User } from '../../data/mockData';
+import { User } from '../../data/mockData';
+import {
+  useBanUserMutation,
+  useGetUserByIdQuery,
+  type UserDetails,
+} from '../../redux/apiSlices/userApi';
 import { toast } from 'sonner';
 
-const photos = [
-  'https://4.bp.blogspot.com/-ZlNJr1vVEWo/V0qVM2RbwhI/AAAAAAAABh4/DvvqVe03WCMh_ZRoUA8lVl3qpoTuNVYmQCLcB/s400/6.jpg',
-  "https://m.media-amazon.com/images/M/MV5BM2Y2OWY1YzMtYmM4Ni00NDU5LTlkMTItMWM0Y2FkNWE5YjZlXkEyXkFqcGc@._V1_.jpg",
-  "https://i.redd.it/rate-this-indonesian-actress-v0-edf74d5g0f8d1.jpg?width=701&format=pjpg&auto=webp&s=6a44c32c45feed39399fdaa7acd35f2c5d86be1f",
-  "https://p3.hippopx.com/preview/1002/877/woman-headscarf-muslim-indonesian-people-beauty-girl.jpg",
-  "https://images.unsplash.com/photo-1521183142708-ee6392033c3e?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8aW5kb25lc2lhbiUyMGdpcmx8ZW58MHx8MHx8fDA%3D",
-  "https://img.freepik.com/premium-photo/beautiful-smiling-asian-woman-black-dress-hijab-looking-camera-with-confident-isolated-white-background_1197599-680.jpg?semt=ais_hybrid&w=740&q=80",
-  "https://i.pinimg.com/736x/fb/5d/d1/fb5dd1701830b228b2c2f0a54f9fa19b.jpg",
-  "https://img.freepik.com/free-photo/close-up-portrait-beautiful-modern-woman-glasses-smiling-looking-happy-posing-eyewear_1258-88373.jpg?semt=ais_hybrid&w=740&q=80"
-
-
-];
+const toLegacyUser = (user: UserDetails): User => ({
+  id: user._id,
+  name: user.name,
+  email: user.email,
+  phone: user.phone ?? '—',
+  joinDate: new Date(user.createdAt).toLocaleDateString(),
+  lastActive: new Date(user.updatedAt).toLocaleDateString(),
+  status: user.isBanned ? 'banned' : user.status.toLowerCase(),
+  plan: user.premiumMembership ? 'Premium' : 'Free',
+  reports: 0,
+});
 
 export default function UserDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { modal } = App.useApp();
+  const {
+    data: userDetails,
+    isLoading,
+    isError,
+    refetch,
+  } = useGetUserByIdQuery(id ?? '', { skip: !id });
+  const user = useMemo(
+    () => (userDetails ? toLegacyUser(userDetails) : null),
+    [userDetails],
+  );
+  const [banUser, { isLoading: isBanning }] = useBanUserMutation();
 
-  const user = useMemo<User>(() => users.find(u => u.id === id) || users[0], [id, users]);
+  if (isLoading) {
+    return <div className="py-20 text-center text-sm text-gray-500">Loading user profile...</div>;
+  }
 
-  const [editOpen, setEditOpen] = useState(false);
-  const [noteOpen, setNoteOpen] = useState(false);
-  const [suspendOpen, setSuspendOpen] = useState(false);
-  const [banOpen, setBanOpen] = useState(false);
+  if (isError || !userDetails || !user) {
+    return (
+      <div className="py-20 text-center">
+        <p className="mb-4 text-sm text-rose-600">Unable to load this user.</p>
+        <Button onClick={() => refetch()}>Try again</Button>
+      </div>
+    );
+  }
 
-  const [notes, setNotes] = useState([
-    { id: 1, author: 'Aria Dey', when: '2026-04-22', visibility: 'internal', body: 'User requested data export under GDPR. Verified identity via email magic link.' },
-    { id: 2, author: 'Mod Team', when: '2026-03-10', visibility: 'flagged', body: 'Two reports closed as not actionable; reporter context was unclear.' },
-  ]);
-
-  const matchHistory = [
-    { id: 'm1', other: 'Maya Chen', when: '2026-04-30', messages: 24 },
-    { id: 'm2', other: 'Liam Murphy', when: '2026-04-22', messages: 8 },
-    { id: 'm3', other: 'Aiko Tanaka', when: '2026-04-19', messages: 0 },
-    { id: 'm4', other: 'Noah Williams', when: '2026-04-12', messages: 41 },
-  ];
-
-  const reports = reportsAgainstUsers.filter(r => r.target === user.name).concat(reportsAgainstUsers.slice(0, 2));
-
+  const photos = [userDetails.profile, userDetails.protectedImages].filter(
+    (photo): photo is string => Boolean(photo),
+  );
+  const location =
+    [userDetails.state, userDetails.country].filter(Boolean).join(', ') || '—';
   const accountTimeline = [
-    { id: 't1', when: '2026-05-01', label: 'Status changed to active', type: 'status' },
-    { id: 't2', when: '2026-04-30', label: 'Subscription upgraded to Premium', type: 'billing' },
-    { id: 't3', when: '2026-04-12', label: 'Suspended 7d for harassment', type: 'mod' },
-    { id: 't4', when: '2026-03-04', label: 'Phone number verified', type: 'verify' },
-    { id: 't5', when: '2026-01-12', label: 'Account created', type: 'create' },
+    {
+      id: 'updated',
+      when: new Date(userDetails.updatedAt).toLocaleDateString(),
+      label: `Account updated · ${user.status}`,
+    },
+    {
+      id: 'onboarding',
+      when: new Date(userDetails.updatedAt).toLocaleDateString(),
+      label: userDetails.onboardingComplete
+        ? 'Onboarding completed'
+        : 'Onboarding incomplete',
+    },
+    {
+      id: 'created',
+      when: new Date(userDetails.createdAt).toLocaleDateString(),
+      label: 'Account created',
+    },
   ];
+  const handleBan = () => {
+    const action = userDetails.isBanned ? 'Unban' : 'Ban';
+
+    modal.confirm({
+      title: `${action} ${user.name}?`,
+      content: userDetails.isBanned
+        ? 'This user will regain access to their account.'
+        : 'This user will no longer be able to access their account.',
+      okText: `${action} user`,
+      okButtonProps: { danger: !userDetails.isBanned },
+      onOk: async () => {
+        try {
+          await banUser(user.id).unwrap();
+          toast.success(
+            `${user.name} has been ${userDetails.isBanned ? 'unbanned' : 'banned'}.`,
+          );
+        } catch {
+          toast.error(`Unable to ${action.toLowerCase()} this user. Please try again.`);
+        }
+      },
+    });
+  };
 
   return (
     <div className="space-y-6">
@@ -73,24 +114,14 @@ export default function UserDetail() {
         title={user.name}
         subtitle={`User ID · ${user.id}`}
         actions={
-          <>
-            <Button icon={<Edit3 className="w-4 h-4" />} onClick={() => setEditOpen(true)}>Edit profile</Button>
-            <Button icon={<Pause className="w-4 h-4" />} onClick={() => setSuspendOpen(true)}>Suspend</Button>
-            <Button icon={<Ban className="w-4 h-4" />} danger onClick={() => setBanOpen(true)}>Ban</Button>
-            <Button
-              icon={<Trash2 className="w-4 h-4" />}
-              danger type="primary"
-              onClick={() => modal.confirm({
-                title: `Delete ${user.name}?`,
-                content: 'This permanently deletes the account, photos, matches and messages. The action cannot be undone.',
-                okText: 'Delete account',
-                okButtonProps: { danger: true },
-                onOk: () => { toast.success(`${user.name} deleted`); navigate('/users'); },
-              })}
-            >
-              Delete
-            </Button>
-          </>
+          <Button
+            icon={<Ban className="w-4 h-4" />}
+            danger={!userDetails.isBanned}
+            loading={isBanning}
+            onClick={handleBan}
+          >
+            {userDetails.isBanned ? 'Unban' : 'Ban'}
+          </Button>
         }
       />
 
@@ -100,9 +131,17 @@ export default function UserDetail() {
           <SectionCard noPadding>
             <div className="p-5 border-b border-gray-100">
               <div className="flex items-center gap-3">
-                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white text-xl font-semibold">
-                  {user.name.split(' ').map(n => n[0]).slice(0, 2).join('')}
-                </div>
+                {userDetails.profile ? (
+                  <img
+                    src={userDetails.profile}
+                    alt={user.name}
+                    className="h-14 w-14 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="w-14 h-14 rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white text-xl font-semibold">
+                    {user.name.split(' ').map(n => n[0]).slice(0, 2).join('')}
+                  </div>
+                )}
                 <div>
                   <div className="text-[16px] font-semibold text-gray-900">{user.name}</div>
                   <div className="text-[12px] text-gray-500">{user.email}</div>
@@ -117,24 +156,32 @@ export default function UserDetail() {
             <div className="p-5 space-y-2.5 text-[13px]">
               <Detail icon={Mail} label="Email" value={user.email} />
               <Detail icon={Phone} label="Phone" value={user.phone} />
-              <Detail icon={MapPin} label="Loc." value="Dhaka, Bangladesh" />
+              <Detail icon={MapPin} label="Loc." value={location} />
               <Detail icon={Calendar} label="Joined" value={user.joinDate} />
-              <Detail icon={ShieldCheck} label="Verified" value="Email · Phone · Photo" />
+              <Detail
+                icon={ShieldCheck}
+                label="Verified"
+                value={userDetails.verified ? 'Verified' : 'Not verified'}
+              />
             </div>
 
             <div className="p-5 border-t border-gray-100">
               <div className="text-[11px] font-medium uppercase tracking-wider text-gray-400 mb-2">Bio</div>
               <p className="text-[13px] text-gray-700 leading-relaxed">
-                Coffee, hikes on weekends, and a lifelong project of becoming a slightly better cook. Looking
-                for someone who prefers a long walk over a long brunch.
+                {userDetails.bio || 'No bio added.'}
               </p>
             </div>
 
             <div className="p-5 border-t border-gray-100">
               <div className="text-[11px] font-medium uppercase tracking-wider text-gray-400 mb-2">Photos</div>
               <div className="grid grid-cols-4 gap-2">
-                {photos.map((c, i) => (
-                  <img key={i} src={c} className="aspect-square rounded-lg object-cover " />
+                {photos.map((photo) => (
+                  <img
+                    key={photo}
+                    src={photo}
+                    alt={`${user.name} profile`}
+                    className="aspect-square rounded-lg object-cover"
+                  />
                 ))}
               </div>
             </div>
@@ -142,16 +189,14 @@ export default function UserDetail() {
 
           <SectionCard title="Subscription & billing">
             <div className="space-y-3 text-[13px]">
-              <Row k="Current plan" v={<span className="font-semibold text-gray-900">{user.plan} · monthly</span>} />
-              <Row k="Status" v={<StatusBadge status="active" />} />
-              <Row k="Next renewal" v="2026-06-04" />
-              <Row k="Lifetime spend" v="$129.50" />
-              <Row k="Payment" v="Visa •• 4242" />
+              <Row k="Current plan" v={<span className="font-semibold text-gray-900">{user.plan}</span>} />
+              <Row k="Status" v={<StatusBadge status={user.status} />} />
             </div>
           </SectionCard>
+
         </div>
 
-        {/* Right column - history, matches, notes */}
+        {/* Right column - account history */}
         <div className="xl:col-span-2 space-y-6">
           <SectionCard title="Account status & history">
             <ol className="relative pl-5">
@@ -166,92 +211,24 @@ export default function UserDetail() {
             </ol>
           </SectionCard>
 
-          <SectionCard title="Match history" description={`${matchHistory.length} recent matches`}>
-            <div className="divide-y divide-gray-100">
-              {matchHistory.map(m => (
-                <div key={m.id} className="py-2.5 flex items-center justify-between">
-                  <UserCell name={m.other} />
-                  <div className="flex items-center gap-6">
-                    <div className="text-right">
-                      <div className="text-[12px] text-gray-500">Messages</div>
-                      <div className="text-[13px] font-semibold text-gray-900">{m.messages}</div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-[12px] text-gray-500">Matched</div>
-                      <div className="text-[13px] text-gray-700">{m.when}</div>
-                    </div>
-                  </div>
-                </div>
-              ))}
+          <SectionCard title="Profile details">
+            <div className="grid grid-cols-1 gap-x-8 gap-y-3 text-[13px] sm:grid-cols-2">
+              <Row k="Display name" v={userDetails.displayName || '—'} />
+              <Row k="Date of birth" v={userDetails.DOB ? new Date(userDetails.DOB).toLocaleDateString() : '—'} />
+              <Row k="Gender" v={userDetails.gender || '—'} />
+              <Row k="Looking for" v={userDetails.lookingFor || '—'} />
+              <Row k="Occupation" v={userDetails.occupation || '—'} />
+              <Row k="Education" v={userDetails.education || '—'} />
+              <Row k="Relationship" v={userDetails.relationStatus || '—'} />
+              <Row k="Nationality" v={userDetails.nationality || '—'} />
+              <Row k="Height" v={userDetails.height ? `${userDetails.height} cm` : '—'} />
+              <Row k="Weight" v={userDetails.weight ? `${userDetails.weight} kg` : '—'} />
             </div>
           </SectionCard>
 
-          <SectionCard title="Reports filed against this user" description={`${reports.length} reports total`}>
-            {reports.length === 0 ? (
-              <p className="text-[13px] text-gray-500">No reports on file.</p>
-            ) : (
-              <div className="divide-y divide-gray-100">
-                {reports.slice(0, 5).map(r => (
-                  <div key={r.id} className="py-2.5 flex items-start justify-between gap-4">
-                    <div>
-                      <div className="text-[13px] font-medium text-gray-900">{r.reason}</div>
-                      <div className="text-[11px] text-gray-500">By {r.reporter} · {r.date}</div>
-                    </div>
-                    <StatusBadge status={r.status} />
-                  </div>
-                ))}
-              </div>
-            )}
-          </SectionCard>
-
-          <SectionCard
-            title="Admin notes"
-            action={<Button size="small" icon={<Plus className="w-3.5 h-3.5" />} onClick={() => setNoteOpen(true)}>Add note</Button>}
-          >
-            <div className="space-y-3">
-              {notes.map(n => (
-                <div key={n.id} className="rounded-lg border border-gray-200 bg-gray-50 p-3">
-                  <div className="flex items-center justify-between mb-1.5">
-                    <div className="text-[12px] font-medium text-gray-800">{n.author}</div>
-                    <div className="flex items-center gap-2">
-                      <Tag className="!m-0 !text-[10px]" color={n.visibility === 'flagged' ? 'red' : 'default'}>{n.visibility}</Tag>
-                      <span className="text-[11px] text-gray-500">{n.when}</span>
-                    </div>
-                  </div>
-                  <p className="text-[13px] text-gray-700 leading-relaxed">{n.body}</p>
-                </div>
-              ))}
-            </div>
-          </SectionCard>
         </div>
       </div>
 
-      {/* Modals */}
-      <EditProfileModal
-        open={editOpen}
-        user={user}
-        onCancel={() => setEditOpen(false)}
-        onSave={() => { setEditOpen(false); toast.success('Profile updated'); }}
-      />
-      <AddNoteModal
-        open={noteOpen}
-        onCancel={() => setNoteOpen(false)}
-        onSave={(values: any) => {
-          setNotes(n => [{ id: Date.now(), author: 'Aria Dey', when: '2026-05-06', ...values, body: values.note }, ...n]);
-          setNoteOpen(false);
-          toast.success('Note added');
-        }}
-      />
-      <SuspendUserModal
-        open={suspendOpen} user={user}
-        onCancel={() => setSuspendOpen(false)}
-        onConfirm={({ duration }: any) => { setSuspendOpen(false); toast.success(`${user.name} suspended for ${duration}`); }}
-      />
-      <BanUserModal
-        open={banOpen} user={user}
-        onCancel={() => setBanOpen(false)}
-        onConfirm={() => { setBanOpen(false); toast.success(`${user.name} banned`); }}
-      />
     </div>
   );
 }

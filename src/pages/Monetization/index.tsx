@@ -2,34 +2,29 @@ import { useState } from 'react';
 import PageHeader from '../../components/common/PageHeader';
 import TabsBar from '../../components/common/TabsBar';
 import PlansTab from './PlansTab';
-import RevenueTab from './RevenueTab';
 import PurchasesTab from './PurchasesTab';
-import PromoCodesTab from './PromoCodesTab';
-import { subscriptionPlans, promoCodes } from '../../data/mockData';
+import { useGetPackagesQuery } from '../../redux/apiSlices/packageApi';
 
 export default function Monetization() {
   const [tab, setTab] = useState<string>('plans');
+  const { data: packages = [] } = useGetPackagesQuery();
 
   const tabs = [
-    { key: 'plans',     label: 'Plans',      count: subscriptionPlans.length },
-    { key: 'revenue',   label: 'Revenue' },
+    { key: 'plans', label: 'Plans', count: packages.length },
     { key: 'purchases', label: 'Purchases' },
-    { key: 'promo',     label: 'Promo codes', count: promoCodes.length },
   ];
 
   return (
     <div className="space-y-6">
       <PageHeader
         title="Monetization"
-        subtitle="Plans, pricing, revenue, transactions and promotional offers."
+        subtitle="Subscription plans and purchase history."
       />
 
       <TabsBar tabs={tabs} value={tab} onChange={setTab} />
 
-      {tab === 'plans'     && <PlansTab />}
-      {tab === 'revenue'   && <RevenueTab />}
+      {tab === 'plans' && <PlansTab />}
       {tab === 'purchases' && <PurchasesTab />}
-      {tab === 'promo'     && <PromoCodesTab />}
     </div>
   );
 }
