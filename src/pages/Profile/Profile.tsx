@@ -16,6 +16,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import PageHeader from "../../components/common/PageHeader";
 import StatusBadge from "../../components/common/StatusBadge";
+import { ProfilePageSkeleton } from "../../components/common/skeletons/PageSkeletons";
 import { IMAGE_BASE_URL } from "../../config/env";
 import { performLogout } from "../../redux/logout";
 import { useChangePasswordMutation } from "../../redux/apiSlices/authApi";
@@ -119,17 +120,7 @@ export default function Profile() {
   };
 
   if (isLoading) {
-    return (
-      <div className="mx-auto max-w-5xl space-y-6">
-        <PageHeader
-          title="Admin Profile"
-          subtitle="Manage your account settings and security preferences."
-        />
-        <div className="flex h-64 items-center justify-center rounded-xl border border-gray-200 bg-white">
-          <p className="text-sm text-gray-500">Loading profile…</p>
-        </div>
-      </div>
-    );
+    return <ProfilePageSkeleton />;
   }
 
   if (isError || !profile) {

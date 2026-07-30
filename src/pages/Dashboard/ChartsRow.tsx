@@ -1,5 +1,6 @@
 import SectionCard from "../../components/common/SectionCard";
 import BarChartCard from "../../components/charts/BarChartCard";
+import { ChartSkeleton } from "../../components/common/skeletons/PageSkeletons";
 import {
   useGetNewUsersActivityQuery,
   useGetUserActivityQuery,
@@ -18,9 +19,7 @@ export default function ChartsRow() {
     <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
       <SectionCard title="Daily active users" description="Last 30 days">
         {isLoading ? (
-          <div className="flex h-60 items-center justify-center text-sm text-gray-500">
-            Loading user activity...
-          </div>
+          <ChartSkeleton />
         ) : isError ? (
           <div className="flex h-60 items-center justify-center text-sm text-rose-600">
             Unable to load user activity.
@@ -35,9 +34,7 @@ export default function ChartsRow() {
       </SectionCard>
       <SectionCard title="New signups" description="Last 30 days">
         {isNewUserActivityLoading ? (
-          <div className="flex h-60 items-center justify-center text-sm text-gray-500">
-            Loading new user activity...
-          </div>
+          <ChartSkeleton />
         ) : isNewUserActivityError ? (
           <div className="flex h-60 items-center justify-center text-sm text-rose-600">
             Unable to load new user activity.

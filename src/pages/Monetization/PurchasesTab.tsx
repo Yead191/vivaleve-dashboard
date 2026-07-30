@@ -5,6 +5,7 @@ import dayjs from "dayjs";
 import { Eye } from "lucide-react";
 import StatusBadge from "../../components/common/StatusBadge";
 import UserCell from "../../components/common/UserCell";
+import { TableSkeleton } from "../../components/common/skeletons/PageSkeletons";
 import {
   useGetSubscriptionsQuery,
   type Subscription,
@@ -139,25 +140,28 @@ export default function PurchasesTab() {
       </div>
 
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
-        <Table
-          columns={columns}
-          dataSource={subscriptions}
-          rowKey="_id"
-          loading={isLoading}
-          scroll={{ x: 1040 }}
-          locale={{
-            emptyText: isError
-              ? "Unable to load subscriptions."
-              : "No subscriptions found.",
-          }}
-          pagination={{
-            current: data?.pagination.page ?? page,
-            pageSize: data?.pagination.limit ?? 10,
-            total: data?.pagination.total ?? 0,
-            showSizeChanger: false,
-            onChange: (nextPage) => setPage(nextPage),
-          }}
-        />
+        {isLoading ? (
+          <TableSkeleton rows={10} columns={8} />
+        ) : (
+          <Table
+            columns={columns}
+            dataSource={subscriptions}
+            rowKey="_id"
+            scroll={{ x: 1040 }}
+            locale={{
+              emptyText: isError
+                ? "Unable to load subscriptions."
+                : "No subscriptions found.",
+            }}
+            pagination={{
+              current: data?.pagination.page ?? page,
+              pageSize: data?.pagination.limit ?? 10,
+              total: data?.pagination.total ?? 0,
+              showSizeChanger: false,
+              onChange: (nextPage) => setPage(nextPage),
+            }}
+          />
+        )}
       </div>
 
       <Modal

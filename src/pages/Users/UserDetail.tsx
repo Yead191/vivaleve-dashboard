@@ -7,6 +7,7 @@ import {
 import PageHeader from '../../components/common/PageHeader';
 import SectionCard from '../../components/common/SectionCard';
 import StatusBadge from '../../components/common/StatusBadge';
+import { UserDetailSkeleton } from '../../components/common/skeletons/PageSkeletons';
 import { User } from '../../data/mockData';
 import {
   useBanUserMutation,
@@ -44,7 +45,7 @@ export default function UserDetail() {
   const [banUser, { isLoading: isBanning }] = useBanUserMutation();
 
   if (isLoading) {
-    return <div className="py-20 text-center text-sm text-gray-500">Loading user profile...</div>;
+    return <UserDetailSkeleton />;
   }
 
   if (isError || !userDetails || !user) {

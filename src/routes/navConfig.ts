@@ -4,6 +4,7 @@ import {
   ShieldCheck,
   BarChart3,
   DollarSign,
+  FileText,
   Bell,
   Settings,
 } from "lucide-react";
@@ -37,6 +38,12 @@ export const navConfig: NavItem[] = [
     label: "Monetization",
     path: "/monetization",
     icon: DollarSign,
+  },
+  {
+    key: "content",
+    label: "App Pages",
+    path: "/content",
+    icon: FileText,
   },
   // { key: 'messaging',    label: 'Messaging',     path: '/messaging',    icon: Bell },
   // { key: "config", label: "App Config", path: "/config", icon: Settings },

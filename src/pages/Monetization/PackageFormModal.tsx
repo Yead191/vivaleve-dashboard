@@ -4,11 +4,13 @@ import {
   PACKAGE_DURATIONS,
   PACKAGE_PAYMENT_TYPES,
   type CreatePackageRequest,
+  type Package,
 } from "../../redux/apiSlices/packageApi";
 
 interface PackageFormModalProps {
   open: boolean;
   loading?: boolean;
+  editingPackage?: Package | null;
   onCancel: () => void;
   onSubmit: (data: CreatePackageRequest) => void;
 }
@@ -16,16 +18,30 @@ interface PackageFormModalProps {
 export default function PackageFormModal({
   open,
   loading = false,
+  editingPackage = null,
   onCancel,
   onSubmit,
 }: PackageFormModalProps) {
   const [form] = Form.useForm<CreatePackageRequest>();
+  const isEditing = Boolean(editingPackage);
 
   useEffect(() => {
-    if (open) {
-      form.resetFields();
+    if (!open) {
+      return;
     }
-  }, [open, form]);
+
+    if (editingPackage) {
+      form.setFieldsValue({
+        title: editingPackage.title,
+        price: editingPackage.price,
+        duration: editingPackage.duration,
+        paymentType: editingPackage.paymentType,
+      });
+      return;
+    }
+
+    form.resetFields();
+  }, [open, editingPackage, form]);
 
   const handleOk = async () => {
     try {
@@ -39,8 +55,8 @@ export default function PackageFormModal({
   return (
     <Modal
       open={open}
-      title="Add package"
-      okText="Create package"
+      title={isEditing ? "Edit package" : "Add package"}
+      okText={isEditing ? "Save changes" : "Create package"}
       confirmLoading={loading}
       onOk={() => void handleOk()}
       onCancel={onCancel}

@@ -39,6 +39,58 @@ body {
   background: #b6bcc4;
 }
 
+.rich-text-editor .ql-toolbar {
+  border-radius: 8px 8px 0 0;
+  border-color: #e5e7eb;
+  background: #fafafa;
+}
+
+.rich-text-editor .ql-container {
+  min-height: 220px;
+  border-radius: 0 0 8px 8px;
+  border-color: #e5e7eb;
+  font-size: 14px;
+}
+
+.rich-text-editor .ql-editor {
+  min-height: 220px;
+}
+
+.rule-content-preview strong {
+  font-weight: 600;
+}
+
+.rule-content-preview em {
+  font-style: italic;
+}
+
+.rule-content-preview u {
+  text-decoration: underline;
+}
+
+.rule-content-preview s {
+  text-decoration: line-through;
+}
+
+.rule-content-preview a {
+  color: #429ca8;
+  text-decoration: underline;
+}
+
+.rule-content-preview ul,
+.rule-content-preview ol {
+  margin: 0.5rem 0;
+  padding-left: 1.25rem;
+}
+
+.rule-content-preview h1,
+.rule-content-preview h2,
+.rule-content-preview h3 {
+  margin: 0.75rem 0 0.5rem;
+  font-weight: 600;
+  color: #111827;
+}
+
 ::-webkit-scrollbar-track {
   background: transparent;
 }

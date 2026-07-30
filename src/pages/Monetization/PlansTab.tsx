@@ -1,18 +1,22 @@
 import { useState, type ReactNode } from "react";
 import { Button } from "antd";
 import dayjs from "dayjs";
-import { Calendar, CreditCard, Plus } from "lucide-react";
+import { Calendar, CreditCard, Pencil, Plus } from "lucide-react";
 import { toast } from "sonner";
 import StatusBadge from "../../components/common/StatusBadge";
+import { CardGridSkeleton } from "../../components/common/skeletons/PageSkeletons";
 import PackageFormModal from "./PackageFormModal";
 import {
   type CreatePackageRequest,
+  type Package,
   useCreatePackageMutation,
   useGetPackagesQuery,
+  useUpdatePackageMutation,
 } from "../../redux/apiSlices/packageApi";
 
 export default function PlansTab() {
   const [openForm, setOpenForm] = useState(false);
+  const [editingPackage, setEditingPackage] = useState<Package | null>(null);
   const {
     data: packages = [],
     isLoading,
@@ -20,15 +24,62 @@ export default function PlansTab() {
     refetch,
   } = useGetPackagesQuery();
   const [createPackage, { isLoading: isCreating }] = useCreatePackageMutation();
+  const [updatePackage, { isLoading: isUpdating }] = useUpdatePackageMutation();
+
+  const handleOpenCreate = () => {
+    setEditingPackage(null);
+    setOpenForm(true);
+  };
+
+  const handleOpenEdit = (pkg: Package) => {
+    setEditingPackage(pkg);
+    setOpenForm(true);
+  };
+
+  const handleCloseForm = () => {
+    setOpenForm(false);
+    setEditingPackage(null);
+  };
 
   const handleCreate = async (values: CreatePackageRequest) => {
     try {
       await createPackage(values).unwrap();
       toast.success("Package created successfully.");
-      setOpenForm(false);
+      handleCloseForm();
     } catch {
       toast.error("Unable to create package. Please try again.");
     }
+  };
+
+  const handleUpdate = async (values: CreatePackageRequest) => {
+    if (!editingPackage) {
+      return;
+    }
+
+    try {
+      await updatePackage({
+        packageId: editingPackage._id,
+        body: {
+          title: values.title,
+          price: values.price,
+          duration: values.duration,
+          paymentType: values.paymentType,
+        },
+      }).unwrap();
+      toast.success("Package updated successfully.");
+      handleCloseForm();
+    } catch {
+      toast.error("Unable to update package. Please try again.");
+    }
+  };
+
+  const handleSubmit = (values: CreatePackageRequest) => {
+    if (editingPackage) {
+      void handleUpdate(values);
+      return;
+    }
+
+    void handleCreate(values);
   };
 
   const header = (
@@ -44,7 +95,7 @@ export default function PlansTab() {
       <Button
         type="primary"
         icon={<Plus className="h-4 w-4" />}
-        onClick={() => setOpenForm(true)}
+        onClick={handleOpenCreate}
       >
         Add package
       </Button>
@@ -54,11 +105,7 @@ export default function PlansTab() {
   let content: ReactNode;
 
   if (isLoading) {
-    content = (
-      <div className="flex h-48 items-center justify-center rounded-xl border border-gray-200 bg-white">
-        <p className="text-sm text-gray-500">Loading subscription plans…</p>
-      </div>
-    );
+    content = <CardGridSkeleton count={3} />;
   } else if (isError) {
     content = (
       <div className="rounded-xl border border-gray-200 bg-white p-8 text-center">
@@ -83,7 +130,7 @@ export default function PlansTab() {
           type="primary"
           className="mt-4"
           icon={<Plus className="h-4 w-4" />}
-          onClick={() => setOpenForm(true)}
+          onClick={handleOpenCreate}
         >
           Add package
         </Button>
@@ -135,6 +182,18 @@ export default function PlansTab() {
                 icon={<Calendar className="h-3.5 w-3.5" />}
               />
             </div>
+
+            {pkg.status === "Active" && (
+              <div className="mt-4 border-t border-gray-100 pt-4">
+                <Button
+                  block
+                  icon={<Pencil className="h-4 w-4" />}
+                  onClick={() => handleOpenEdit(pkg)}
+                >
+                  Edit package
+                </Button>
+              </div>
+            )}
           </article>
         ))}
       </div>
@@ -148,9 +207,10 @@ export default function PlansTab() {
 
       <PackageFormModal
         open={openForm}
-        loading={isCreating}
-        onCancel={() => setOpenForm(false)}
-        onSubmit={(values) => void handleCreate(values)}
+        loading={isCreating || isUpdating}
+        editingPackage={editingPackage}
+        onCancel={handleCloseForm}
+        onSubmit={handleSubmit}
       />
     </div>
   );

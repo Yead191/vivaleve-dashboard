@@ -4,6 +4,7 @@ import { Ban, Eye } from 'lucide-react';
 import type { ColumnsType } from 'antd/es/table';
 import UserCell from '../../components/common/UserCell';
 import StatusBadge from '../../components/common/StatusBadge';
+import { TableSkeleton } from '../../components/common/skeletons/PageSkeletons';
 import { User } from '../../data/mockData';
 
 interface UsersTableProps {
@@ -119,12 +120,15 @@ export default function UsersTable({
     },
   ];
 
+  if (loading) {
+    return <TableSkeleton rows={10} columns={7} />;
+  }
+
   return (
     <Table
       dataSource={data}
       columns={columns}
       rowKey="id"
-      loading={loading}
       scroll={{ x: 980 }}
       locale={{
         emptyText: isError ? 'Unable to load users.' : 'No users found.',

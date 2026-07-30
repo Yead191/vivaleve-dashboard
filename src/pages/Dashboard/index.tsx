@@ -17,13 +17,6 @@ export default function Dashboard() {
       <StatsRow />
       <ChartsRow />
       <LiveFeedRow />
-
-      <div>
-        <h3 className="text-[12px] font-medium uppercase tracking-wider text-gray-400 mb-2 px-1">
-          Quick actions
-        </h3>
-        <QuickActionsRow />
-      </div>
     </div>
   );
 }

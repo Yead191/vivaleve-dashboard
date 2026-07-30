@@ -1,11 +1,14 @@
 import { Users, Activity, UserPlus, Heart, Flag } from "lucide-react";
 import StatCard from "../../components/common/StatCard";
+import { StatCardsSkeleton } from "../../components/common/skeletons/PageSkeletons";
 import { useGetOverviewQuery } from "../../redux/apiSlices/overviewApi";
 
 export default function StatsRow() {
   const { data, isLoading, isError } = useGetOverviewQuery();
-  const value = (stat: number | undefined) =>
-    isLoading ? "..." : (stat?.toLocaleString() ?? "--");
+
+  if (isLoading) {
+    return <StatCardsSkeleton count={5} />;
+  }
 
   return (
     <div>
@@ -18,7 +21,7 @@ export default function StatsRow() {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         <StatCard
           label="Total users"
-          value={value(data?.totalUser)}
+          value={data?.totalUser?.toLocaleString() ?? "--"}
           sub="all users"
           icon={Users}
           tone="brand"
@@ -26,7 +29,7 @@ export default function StatsRow() {
 
         <StatCard
           label="Active today"
-          value={value(data?.activeToday)}
+          value={data?.activeToday?.toLocaleString() ?? "--"}
           sub="today"
           icon={Activity}
           tone="indigo"
@@ -34,7 +37,7 @@ export default function StatsRow() {
 
         <StatCard
           label="New signups"
-          value={value(data?.newSignupUser)}
+          value={data?.newSignupUser?.toLocaleString() ?? "--"}
           sub="new users"
           icon={UserPlus}
           tone="green"
@@ -42,7 +45,7 @@ export default function StatsRow() {
 
         <StatCard
           label="Total matches made"
-          value={value(data?.totalMatchesUser)}
+          value={data?.totalMatchesUser?.toLocaleString() ?? "--"}
           sub="all time"
           icon={Heart}
           tone="rose"
@@ -50,7 +53,7 @@ export default function StatsRow() {
 
         <StatCard
           label="Open reports"
-          value={value(data?.openReport)}
+          value={data?.openReport?.toLocaleString() ?? "--"}
           sub="pending review"
           icon={Flag}
           tone="amber"

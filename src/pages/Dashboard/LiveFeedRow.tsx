@@ -3,6 +3,7 @@ import { Table } from "antd";
 import SectionCard from "../../components/common/SectionCard";
 import StatusBadge from "../../components/common/StatusBadge";
 import UserCell from "../../components/common/UserCell";
+import { TableSkeleton } from "../../components/common/skeletons/PageSkeletons";
 import {
   useGetRecentReportsQuery,
   useGetRecentSignupUsersQuery,
@@ -173,19 +174,22 @@ export default function LiveFeedRow() {
         }
         noPadding
       >
-        <Table
-          dataSource={recentSignupUsers}
-          columns={signupCols}
-          rowKey="_id"
-          pagination={false}
-          size="small"
-          loading={isRecentSignupUsersLoading}
-          locale={{
-            emptyText: isRecentSignupUsersError
-              ? "Unable to load recent signups."
-              : "No recent signups.",
-          }}
-        />
+        {isRecentSignupUsersLoading ? (
+          <TableSkeleton rows={6} columns={3} />
+        ) : (
+          <Table
+            dataSource={recentSignupUsers}
+            columns={signupCols}
+            rowKey="_id"
+            pagination={false}
+            size="small"
+            locale={{
+              emptyText: isRecentSignupUsersError
+                ? "Unable to load recent signups."
+                : "No recent signups.",
+            }}
+          />
+        )}
       </SectionCard>
 
       <SectionCard
@@ -201,19 +205,22 @@ export default function LiveFeedRow() {
         }
         noPadding
       >
-        <Table
-          dataSource={recentReports}
-          columns={reportCols}
-          rowKey="_id"
-          pagination={false}
-          size="small"
-          loading={isRecentReportsLoading}
-          locale={{
-            emptyText: isRecentReportsError
-              ? "Unable to load recent reports."
-              : "No recent reports.",
-          }}
-        />
+        {isRecentReportsLoading ? (
+          <TableSkeleton rows={6} columns={4} />
+        ) : (
+          <Table
+            dataSource={recentReports}
+            columns={reportCols}
+            rowKey="_id"
+            pagination={false}
+            size="small"
+            locale={{
+              emptyText: isRecentReportsError
+                ? "Unable to load recent reports."
+                : "No recent reports.",
+            }}
+          />
+        )}
       </SectionCard>
 
       <SectionCard
@@ -229,19 +236,22 @@ export default function LiveFeedRow() {
         }
         noPadding
       >
-        <Table
-          dataSource={recentSubscriptions}
-          columns={purchaseCols}
-          rowKey="_id"
-          pagination={false}
-          size="small"
-          loading={isRecentSubscriptionsLoading}
-          locale={{
-            emptyText: isRecentSubscriptionsError
-              ? "Unable to load recent subscriptions."
-              : "No recent subscriptions.",
-          }}
-        />
+        {isRecentSubscriptionsLoading ? (
+          <TableSkeleton rows={6} columns={4} />
+        ) : (
+          <Table
+            dataSource={recentSubscriptions}
+            columns={purchaseCols}
+            rowKey="_id"
+            pagination={false}
+            size="small"
+            locale={{
+              emptyText: isRecentSubscriptionsError
+                ? "Unable to load recent subscriptions."
+                : "No recent subscriptions.",
+            }}
+          />
+        )}
       </SectionCard>
     </div>
   );

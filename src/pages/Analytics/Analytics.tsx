@@ -26,6 +26,7 @@ import {
   Users,
 } from "lucide-react";
 import PageHeader from "../../components/common/PageHeader";
+import { ChartSkeleton } from "../../components/common/skeletons/PageSkeletons";
 import {
   useGetAgeDistributionAnalyticsQuery,
   useGetGenderDistributionAnalyticsQuery,
@@ -128,7 +129,7 @@ function ChartCard({
       </div>
       <div className="p-4 sm:p-5">
         {isLoading ? (
-          <ChartSkeleton />
+          <ChartSkeleton height={280} />
         ) : error ? (
           <ChartError message={error} onRetry={onRetry} />
         ) : isEmpty ? (
@@ -138,27 +139,6 @@ function ChartCard({
         )}
       </div>
     </section>
-  );
-}
-
-function ChartSkeleton() {
-  return (
-    <div
-      className="h-[280px] animate-pulse"
-      role="status"
-      aria-label="Loading chart"
-    >
-      <div className="flex h-full items-end gap-3 border-b border-l border-gray-200 px-4 pb-4">
-        {[45, 70, 52, 83, 64, 90, 76].map((height, index) => (
-          <div
-            key={index}
-            className="flex-1 rounded-t bg-gray-100"
-            style={{ height: `${height}%` }}
-          />
-        ))}
-      </div>
-      <span className="sr-only">Loading analytics data</span>
-    </div>
   );
 }
 

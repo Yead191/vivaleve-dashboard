@@ -4,6 +4,7 @@ import type { ColumnsType } from "antd/es/table";
 import { toast } from "sonner";
 import PageHeader from "../../components/common/PageHeader";
 import StatusBadge from "../../components/common/StatusBadge";
+import { TableSkeleton } from "../../components/common/skeletons/PageSkeletons";
 import {
   useGetReportsQuery,
   useUpdateReportStatusMutation,
@@ -135,25 +136,28 @@ export default function Moderation() {
       />
 
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
-        <Table
-          dataSource={reports?.data ?? []}
-          columns={columns}
-          rowKey="_id"
-          loading={isLoading}
-          scroll={{ x: 970 }}
-          locale={{
-            emptyText: isError
-              ? "Unable to load reports."
-              : "No reports found.",
-          }}
-          pagination={{
-            current: reports?.pagination.page ?? page,
-            pageSize: reports?.pagination.limit ?? 10,
-            total: reports?.pagination.total ?? 0,
-            showSizeChanger: false,
-            onChange: setPage,
-          }}
-        />
+        {isLoading ? (
+          <TableSkeleton rows={10} columns={6} />
+        ) : (
+          <Table
+            dataSource={reports?.data ?? []}
+            columns={columns}
+            rowKey="_id"
+            scroll={{ x: 970 }}
+            locale={{
+              emptyText: isError
+                ? "Unable to load reports."
+                : "No reports found.",
+            }}
+            pagination={{
+              current: reports?.pagination.page ?? page,
+              pageSize: reports?.pagination.limit ?? 10,
+              total: reports?.pagination.total ?? 0,
+              showSizeChanger: false,
+              onChange: setPage,
+            }}
+          />
+        )}
       </div>
     </div>
   );
