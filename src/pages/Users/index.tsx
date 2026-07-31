@@ -11,13 +11,23 @@ import {
   useLazyGetUserListQuery,
 } from '../../redux/apiSlices/overviewApi';
 import type { DashboardUser } from '../../redux/apiSlices/overviewApi';
-import { useBanUserMutation } from '../../redux/apiSlices/userApi';
+import {
+  useBanUserMutation,
+  useUpdateVerifiedStatusMutation,
+} from '../../redux/apiSlices/userApi';
 import { toast } from 'sonner';
+import * as XLSX from 'xlsx';
+import {
+  formatVerifiedStatusLabel,
+  resolveVerifiedStatus,
+  type VerifiedStatus,
+} from '../../utils/verifiedStatus';
 
 interface UserFilters {
   q: string;
   status: string;
   plan: string;
+  verifiedStatus: string;
 }
 
 const mapDashboardUser = (user: DashboardUser): User => ({
@@ -30,6 +40,7 @@ const mapDashboardUser = (user: DashboardUser): User => ({
   status: user.isBanned ? 'banned' : user.status.toLowerCase(),
   plan: user.premiumMembership ? 'Premium' : 'Free',
   reports: 0,
+  verifiedStatus: resolveVerifiedStatus(user),
 });
 
 const matchesFilters = (user: User, filters: UserFilters) => {
@@ -41,12 +52,12 @@ const matchesFilters = (user: User, filters: UserFilters) => {
   const matchesStatus =
     filters.status === 'all' || user.status === filters.status;
   const matchesPlan = filters.plan === 'all' || user.plan === filters.plan;
+  const matchesVerifiedStatus =
+    filters.verifiedStatus === 'all' ||
+    user.verifiedStatus === filters.verifiedStatus;
 
-  return matchesQ && matchesStatus && matchesPlan;
+  return matchesQ && matchesStatus && matchesPlan && matchesVerifiedStatus;
 };
-
-const escapeCsvCell = (value: string | number) =>
-  `"${String(value).replace(/"/g, '""')}"`;
 
 export default function UsersList() {
   const [tab, setTab] = useState<string>('all');
@@ -55,12 +66,19 @@ export default function UsersList() {
     q: '',
     status: 'all',
     plan: 'all',
+    verifiedStatus: 'all',
   });
   const [exporting, setExporting] = useState(false);
   const [userToBan, setUserToBan] = useState<User | null>(null);
   const { data: userList, isLoading, isError } = useGetUserListQuery(page);
   const [fetchUserList] = useLazyGetUserListQuery();
   const [banUser, { isLoading: isBanning }] = useBanUserMutation();
+  const [updateVerifiedStatus, { isLoading: isUpdatingVerifiedStatus }] =
+    useUpdateVerifiedStatusMutation();
+  const [actionUserId, setActionUserId] = useState<string | null>(null);
+  const [actionType, setActionType] = useState<'verify' | 'reject' | null>(
+    null,
+  );
 
   const users = useMemo<User[]>(
     () => (userList?.data ?? []).map(mapDashboardUser),
@@ -98,35 +116,24 @@ export default function UsersList() {
         return;
       }
 
-      const headers = [
-        'Name',
-        'Email',
-        'Phone',
-        'Joined',
-        'Updated',
-        'Status',
-        'Plan',
-      ];
-      const rows = exportUsers.map((user) => [
-        user.name,
-        user.email,
-        user.phone,
-        user.joinDate,
-        user.lastActive,
-        user.status,
-        user.plan,
-      ]);
-      const csv = [headers, ...rows]
-        .map((row) => row.map(escapeCsvCell).join(','))
-        .join('\r\n');
-      const url = URL.createObjectURL(
-        new Blob([`\uFEFF${csv}`], { type: 'text/csv;charset=utf-8' }),
+      const rows = exportUsers.map((user) => ({
+        Name: user.name,
+        Email: user.email,
+        Phone: user.phone,
+        Joined: user.joinDate,
+        Updated: user.lastActive,
+        Status: user.status,
+        Plan: user.plan,
+        'Verification status': formatVerifiedStatusLabel(user.verifiedStatus),
+      }));
+
+      const workbook = XLSX.utils.book_new();
+      const worksheet = XLSX.utils.json_to_sheet(rows);
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Users');
+      XLSX.writeFile(
+        workbook,
+        `vivaleve-users-${new Date().toISOString().slice(0, 10)}.xlsx`,
       );
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `vivaleve-users-${new Date().toISOString().slice(0, 10)}.csv`;
-      link.click();
-      URL.revokeObjectURL(url);
       toast.success(`Exported ${exportUsers.length} users.`);
     } catch {
       toast.error('Unable to export users. Please try again.');
@@ -137,6 +144,33 @@ export default function UsersList() {
 
   const handleBanClick = (user: User) => {
     setUserToBan(user);
+  };
+
+  const handleVerifiedStatusUpdate = async (
+    user: User,
+    verifiedStatus: VerifiedStatus,
+    action: 'verify' | 'reject',
+  ) => {
+    setActionUserId(user.id);
+    setActionType(action);
+
+    try {
+      await updateVerifiedStatus({ userId: user.id, verifiedStatus }).unwrap();
+      toast.success(
+        verifiedStatus === 'verified'
+          ? `${user.name} has been verified`
+          : `${user.name} verification has been rejected`,
+      );
+    } catch {
+      toast.error(
+        verifiedStatus === 'verified'
+          ? 'Unable to verify user. Please try again.'
+          : 'Unable to reject verification. Please try again.',
+      );
+    } finally {
+      setActionUserId(null);
+      setActionType(null);
+    }
   };
 
   const handleBanConfirm = async ({
@@ -182,11 +216,27 @@ export default function UsersList() {
             onExport={handleExport}
             exporting={exporting}
           />
-          <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
+          <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white">
             <UsersTable
               data={filtered}
               onBan={handleBanClick}
+              onVerify={(user) =>
+                void handleVerifiedStatusUpdate(user, 'verified', 'verify')
+              }
+              onReject={(user) =>
+                void handleVerifiedStatusUpdate(user, 'rejected', 'reject')
+              }
               banningUserId={isBanning ? userToBan?.id : null}
+              verifyingUserId={
+                isUpdatingVerifiedStatus && actionType === 'verify'
+                  ? actionUserId
+                  : null
+              }
+              rejectingUserId={
+                isUpdatingVerifiedStatus && actionType === 'reject'
+                  ? actionUserId
+                  : null
+              }
               loading={isLoading}
               isError={isError}
               currentPage={userList?.pagination.page ?? page}

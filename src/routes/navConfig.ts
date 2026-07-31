@@ -5,6 +5,7 @@ import {
   BarChart3,
   DollarSign,
   FileText,
+  CalendarDays,
   Bell,
   Settings,
 } from "lucide-react";
@@ -44,6 +45,12 @@ export const navConfig: NavItem[] = [
     label: "App Pages",
     path: "/content",
     icon: FileText,
+  },
+  {
+    key: "events",
+    label: "Event management",
+    path: "/events",
+    icon: CalendarDays,
   },
   // { key: 'messaging',    label: 'Messaging',     path: '/messaging',    icon: Bell },
   // { key: "config", label: "App Config", path: "/config", icon: Settings },

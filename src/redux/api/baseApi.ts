@@ -141,6 +141,8 @@ export const api = createApi({
     "Package",
     "Rule",
     "Post",
+    "Event",
+    "EventBooking",
   ],
   endpoints: () => ({}),
 });

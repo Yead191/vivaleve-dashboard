@@ -2,7 +2,7 @@ import { Input, Select, Button } from 'antd';
 import { Search, Download } from 'lucide-react';
 
 interface UsersFilterBarProps {
-  filters: { q: string; status: string; plan: string };
+  filters: { q: string; status: string; plan: string; verifiedStatus: string };
   setFilters: (f: UsersFilterBarProps['filters']) => void;
   onExport: () => void;
   exporting?: boolean;
@@ -44,13 +44,24 @@ export default function UsersFilterBar({
           { value: 'Premium', label: 'Premium' },
         ]}
       />
+      <Select
+        value={filters.verifiedStatus}
+        onChange={(v) => setFilters({ ...filters, verifiedStatus: v })}
+        className="!w-full sm:!w-44"
+        options={[
+          { value: 'all', label: 'All verification' },
+          { value: 'pending', label: 'Pending' },
+          { value: 'verified', label: 'Verified' },
+          { value: 'rejected', label: 'Rejected' },
+        ]}
+      />
       <div className="ml-auto flex w-full items-center justify-end gap-2 sm:w-auto">
         <Button
           icon={<Download className="h-4 w-4" />}
           onClick={onExport}
           loading={exporting}
         >
-          Export CSV
+          Export Excel
         </Button>
       </div>
     </div>

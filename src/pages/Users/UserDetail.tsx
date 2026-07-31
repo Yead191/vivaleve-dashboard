@@ -16,6 +16,8 @@ import {
 } from '../../redux/apiSlices/userApi';
 import { toast } from 'sonner';
 
+import { resolveVerifiedStatus } from '../../utils/verifiedStatus';
+
 const toLegacyUser = (user: UserDetails): User => ({
   id: user._id,
   name: user.name,
@@ -26,6 +28,7 @@ const toLegacyUser = (user: UserDetails): User => ({
   status: user.isBanned ? 'banned' : user.status.toLowerCase(),
   plan: user.premiumMembership ? 'Premium' : 'Free',
   reports: 0,
+  verifiedStatus: resolveVerifiedStatus(user),
 });
 
 export default function UserDetail() {

@@ -95,6 +95,8 @@ const lastNames  = ['Chen','Park','Iqbal','Murphy','Tanaka','Williams','Sharma',
 const statuses = ['active','active','active','active','suspended','banned'];
 const plans = ['Free','Free','Free','Plus','Premium','Plus','Premium'];
 
+import type { VerifiedStatus } from '../../utils/verifiedStatus';
+
 export interface User {
   id: string;
   name: string;
@@ -105,6 +107,7 @@ export interface User {
   status: string;
   plan: string;
   reports: number;
+  verifiedStatus: VerifiedStatus | null;
 }
 
 export const users: User[] = Array.from({ length: 60 }, (_, i) => {
@@ -120,6 +123,7 @@ export const users: User[] = Array.from({ length: 60 }, (_, i) => {
     status:    statuses[i % statuses.length],
     plan:      plans[i % plans.length],
     reports:   (i * 3) % 7,
+    verifiedStatus: (['pending', 'verified', 'rejected', null] as const)[i % 4],
   };
 });
 

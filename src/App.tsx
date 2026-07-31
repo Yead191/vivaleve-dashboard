@@ -9,6 +9,7 @@ import PostDetail from './pages/Moderation/PostDetail';
 import Analytics from './pages/Analytics/Analytics';
 import Monetization from './pages/Monetization';
 import Content from './pages/Content';
+import Events from './pages/Events';
 import Messaging from './pages/Messaging/Messaging';
 import Config from './pages/Config';
 import Profile from './pages/Profile/Profile';
@@ -42,6 +43,7 @@ export default function App() {
           <Route path="/analytics" element={<Analytics />} />
           <Route path="/monetization" element={<Monetization />} />
           <Route path="/content" element={<Content />} />
+          <Route path="/events" element={<Events />} />
           {/* <Route path="/messaging" element={<Messaging />} /> */}
           <Route path="/config" element={<Config />} />
           <Route path="/profile" element={<Profile />} />

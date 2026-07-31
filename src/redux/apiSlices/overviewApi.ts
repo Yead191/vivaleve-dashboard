@@ -1,4 +1,5 @@
 import { api } from "../api/baseApi";
+import type { VerifiedStatus } from "../../utils/verifiedStatus";
 
 export interface OverviewData {
   totalUser: number;
@@ -46,6 +47,7 @@ export interface RecentSignupUser {
   premiumMembership: boolean;
   verified: boolean;
   isAdminVerified: boolean;
+  verifiedStatus?: VerifiedStatus;
   isBanned: boolean;
   createdAt: string;
   updatedAt: string;
@@ -107,6 +109,8 @@ export interface DashboardUser {
   premiumMembership: boolean;
   isBanned: boolean;
   verified: boolean;
+  isAdminVerified: boolean;
+  verifiedStatus?: VerifiedStatus;
   onboardingComplete: boolean;
   createdAt: string;
   updatedAt: string;

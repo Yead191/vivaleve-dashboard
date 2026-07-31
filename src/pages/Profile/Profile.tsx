@@ -1,5 +1,16 @@
 import { useEffect, useRef, useState } from "react";
-import { App, Button, Card, Divider, Form, Input, Tabs, Tag, Upload } from "antd";
+import {
+  App,
+  Button,
+  Card,
+  Divider,
+  Form,
+  Image,
+  Input,
+  Tabs,
+  Tag,
+  Upload,
+} from "antd";
 import type { UploadFile } from "antd";
 import dayjs from "dayjs";
 import {
@@ -157,10 +168,14 @@ export default function Profile() {
             <div className="relative -mt-12 mb-4 flex flex-col items-center">
               <div className="relative">
                 {displayAvatar ? (
-                  <img
+                  <Image
                     src={displayAvatar}
                     alt={profile.name}
-                    className="h-[100px] w-[100px] rounded-full border-4 border-white object-cover shadow-md"
+                    width={100}
+                    height={100}
+                    className="rounded-full border-4 border-white object-cover shadow-md"
+                    rootClassName="!block overflow-hidden rounded-full"
+                    preview={{ mask: "View" }}
                   />
                 ) : (
                   <div

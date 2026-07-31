@@ -1,4 +1,5 @@
 import { api } from "../api/baseApi";
+import type { VerifiedStatus } from "../../utils/verifiedStatus";
 
 export interface UserDetails {
   _id: string;
@@ -9,6 +10,7 @@ export interface UserDetails {
   status: string;
   profile: string;
   isAdminVerified: boolean;
+  verifiedStatus?: VerifiedStatus;
   premiumMembership: boolean;
   isBanned: boolean;
   verified: boolean;
@@ -43,6 +45,11 @@ interface UserDetailsResponse {
   data: UserDetails;
 }
 
+interface UpdateVerifiedStatusRequest {
+  userId: string;
+  verifiedStatus: VerifiedStatus;
+}
+
 const userApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getUserById: builder.query<UserDetails, string>({
@@ -66,6 +73,25 @@ const userApi = api.injectEndpoints({
         "User",
       ],
     }),
+    updateVerifiedStatus: builder.mutation<
+      UserDetails,
+      UpdateVerifiedStatusRequest
+    >({
+      query: ({ userId, verifiedStatus }) => ({
+        url: `/user/admin-verified/${userId}`,
+        method: "PATCH",
+        body: {
+          verifiedStatus,
+          isAdminVerified: verifiedStatus === "verified",
+        },
+      }),
+      transformResponse: (response: UserDetailsResponse) => response.data,
+      invalidatesTags: (_result, _error, { userId }) => [
+        { type: "User", id: userId },
+        "User",
+        "Overview",
+      ],
+    }),
   }),
 });
 
@@ -73,4 +99,5 @@ export const {
   useGetUserByIdQuery,
   useLazyGetUserByIdQuery,
   useBanUserMutation,
+  useUpdateVerifiedStatusMutation,
 } = userApi;
