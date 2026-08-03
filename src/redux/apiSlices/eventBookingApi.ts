@@ -1,6 +1,6 @@
 import { api } from "../api/baseApi";
 
-export type BookingRequestStatus = "pending" | "approved" | "rejected";
+export type BookingRequestStatus = "pending" | "accepted" | "rejected";
 export type PaymentStatus = "paid" | "unpaid" | "refunded" | "failed";
 
 export interface EventBookingEvent {
@@ -57,7 +57,7 @@ export interface EventBookingDetail {
 export interface UpdateBookingRequestStatusRequest {
   bookingId: string;
   eventId: string;
-  bookingRequest: Extract<BookingRequestStatus, "approved" | "rejected">;
+  bookingRequest: Extract<BookingRequestStatus, "accepted" | "rejected">;
 }
 
 interface EventBookingListResponse {
@@ -140,7 +140,7 @@ const eventBookingApi = api.injectEndpoints({
       UpdateBookingRequestStatusRequest
     >({
       query: ({ bookingId, bookingRequest }) => ({
-        url: `/event-booking/${bookingId}`,
+        url: `/event-booking/${bookingId}/request`,
         method: "PATCH",
         body: { bookingRequest },
       }),

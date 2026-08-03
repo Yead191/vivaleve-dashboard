@@ -44,7 +44,7 @@ export default function EventBookingsTab({
 }: EventBookingsTabProps) {
   const selectedEvent = events.find((event) => event._id === selectedEventId);
   const [actionBookingId, setActionBookingId] = useState<string | null>(null);
-  const [actionType, setActionType] = useState<"approved" | "rejected" | null>(
+  const [actionType, setActionType] = useState<"accepted" | "rejected" | null>(
     null,
   );
   const [detailBooking, setDetailBooking] = useState<EventBooking | null>(null);
@@ -76,7 +76,7 @@ export default function EventBookingsTab({
 
   const handleStatusUpdate = async (
     booking: EventBooking,
-    bookingRequest: Extract<BookingRequestStatus, "approved" | "rejected">,
+    bookingRequest: Extract<BookingRequestStatus, "accepted" | "rejected">,
   ) => {
     if (!selectedEventId) {
       return;
@@ -99,14 +99,14 @@ export default function EventBookingsTab({
         bookingRequest,
       }).unwrap();
       toast.success(
-        bookingRequest === "approved"
-          ? `${booking.userId.name}'s booking approved.`
+        bookingRequest === "accepted"
+          ? `${booking.userId.name}'s booking accepted.`
           : `${booking.userId.name}'s booking rejected.`,
       );
     } catch {
       toast.error(
-        bookingRequest === "approved"
-          ? "Unable to approve booking. Please try again."
+        bookingRequest === "accepted"
+          ? "Unable to accept booking. Please try again."
           : "Unable to reject booking. Please try again.",
       );
     } finally {
@@ -192,11 +192,11 @@ export default function EventBookingsTab({
           {record.bookingRequest === "pending" && (
             <>
               <Popconfirm
-                title="Approve this booking?"
+                title="Accept this booking?"
                 description={`${record.userId.name} will be confirmed for this event.`}
-                okText="Approve"
+                okText="Accept"
                 cancelText="Cancel"
-                onConfirm={() => void handleStatusUpdate(record, "approved")}
+                onConfirm={() => void handleStatusUpdate(record, "accepted")}
               >
                 <Button
                   size="small"
@@ -204,10 +204,10 @@ export default function EventBookingsTab({
                   ghost
                   icon={<Check className="h-3.5 w-3.5" />}
                   loading={
-                    actionBookingId === record._id && actionType === "approved"
+                    actionBookingId === record._id && actionType === "accepted"
                   }
                 >
-                  Approve
+                  Accept
                 </Button>
               </Popconfirm>
               <Popconfirm
@@ -256,7 +256,7 @@ export default function EventBookingsTab({
             Event bookings
           </h3>
           <p className="text-[12px] text-gray-500">
-            Review attendees, approve requests, and track payments for an event.
+            Review attendees, accept or reject requests, and track payments.
           </p>
         </div>
         <Select

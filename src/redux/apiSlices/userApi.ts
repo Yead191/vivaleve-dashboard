@@ -36,6 +36,9 @@ export interface UserDetails {
   weight?: number;
   zidCode?: number;
   protectedImages?: string;
+  documentType?: string;
+  documentVerified?: string;
+  verifyOwnPicture?: string;
   phone?: string;
 }
 
@@ -78,14 +81,12 @@ const userApi = api.injectEndpoints({
       UpdateVerifiedStatusRequest
     >({
       query: ({ userId, verifiedStatus }) => ({
-        url: `/user/admin-verified/${userId}`,
+        url: `/auth/verify-user-as-admin/${userId}`,
         method: "PATCH",
-        body: {
-          verifiedStatus,
-          isAdminVerified: verifiedStatus === "verified",
-        },
+        body: { verifiedStatus },
       }),
-      transformResponse: (response: UserDetailsResponse) => response.data,
+      transformResponse: (response: UserDetailsResponse) =>
+        response?.data ?? (response as unknown as UserDetails),
       invalidatesTags: (_result, _error, { userId }) => [
         { type: "User", id: userId },
         "User",

@@ -1,8 +1,17 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { App, Button, Tag } from 'antd';
+import { App, Button, Image, Popconfirm, Tag } from 'antd';
 import {
-  ArrowLeft, Ban, MapPin, Mail, Phone, Calendar, ShieldCheck,
+  ArrowLeft,
+  Ban,
+  MapPin,
+  Mail,
+  Phone,
+  Calendar,
+  Camera,
+  FileText,
+  ShieldCheck,
+  ShieldX,
 } from 'lucide-react';
 import PageHeader from '../../components/common/PageHeader';
 import SectionCard from '../../components/common/SectionCard';
@@ -12,11 +21,16 @@ import { User } from '../../data/mockData';
 import {
   useBanUserMutation,
   useGetUserByIdQuery,
+  useUpdateVerifiedStatusMutation,
   type UserDetails,
 } from '../../redux/apiSlices/userApi';
 import { toast } from 'sonner';
-
-import { resolveVerifiedStatus } from '../../utils/verifiedStatus';
+import {
+  formatVerifiedStatusLabel,
+  resolveVerifiedStatus,
+  VERIFIED_STATUS_STYLES,
+  type VerifiedStatus,
+} from '../../utils/verifiedStatus';
 
 const toLegacyUser = (user: UserDetails): User => ({
   id: user._id,
@@ -30,6 +44,24 @@ const toLegacyUser = (user: UserDetails): User => ({
   reports: 0,
   verifiedStatus: resolveVerifiedStatus(user),
 });
+
+const VerifiedStatusBadge = ({ status }: { status: VerifiedStatus | null }) => {
+  if (!status) {
+    return (
+      <span className="inline-flex rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-medium text-gray-600">
+        Not submitted
+      </span>
+    );
+  }
+
+  return (
+    <span
+      className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium ${VERIFIED_STATUS_STYLES[status]}`}
+    >
+      {formatVerifiedStatusLabel(status)}
+    </span>
+  );
+};
 
 export default function UserDetail() {
   const { id } = useParams();
@@ -46,6 +78,11 @@ export default function UserDetail() {
     [userDetails],
   );
   const [banUser, { isLoading: isBanning }] = useBanUserMutation();
+  const [updateVerifiedStatus, { isLoading: isUpdatingVerifiedStatus }] =
+    useUpdateVerifiedStatusMutation();
+  const [verifyAction, setVerifyAction] = useState<'verify' | 'reject' | null>(
+    null,
+  );
 
   if (isLoading) {
     return <UserDetailSkeleton />;
@@ -63,6 +100,11 @@ export default function UserDetail() {
   const photos = [userDetails.profile, userDetails.protectedImages].filter(
     (photo): photo is string => Boolean(photo),
   );
+  const verifiedStatus = resolveVerifiedStatus(userDetails);
+  const isPending = verifiedStatus === 'pending';
+  const ownPicture = userDetails.verifyOwnPicture;
+  const documentImage = userDetails.documentVerified;
+  const hasVerificationMedia = Boolean(ownPicture || documentImage);
   const location =
     [userDetails.state, userDetails.country].filter(Boolean).join(', ') || '—';
   const accountTimeline = [
@@ -84,6 +126,34 @@ export default function UserDetail() {
       label: 'Account created',
     },
   ];
+
+  const handleVerifiedStatusUpdate = async (
+    nextStatus: VerifiedStatus,
+    action: 'verify' | 'reject',
+  ) => {
+    setVerifyAction(action);
+
+    try {
+      await updateVerifiedStatus({
+        userId: user.id,
+        verifiedStatus: nextStatus,
+      }).unwrap();
+      toast.success(
+        nextStatus === 'verified'
+          ? `${user.name} has been verified`
+          : `${user.name} verification has been rejected`,
+      );
+    } catch {
+      toast.error(
+        nextStatus === 'verified'
+          ? 'Unable to verify user. Please try again.'
+          : 'Unable to reject verification. Please try again.',
+      );
+    } finally {
+      setVerifyAction(null);
+    }
+  };
+
   const handleBan = () => {
     const action = userDetails.isBanned ? 'Unban' : 'Ban';
 
@@ -149,9 +219,10 @@ export default function UserDetail() {
                 <div>
                   <div className="text-[16px] font-semibold text-gray-900">{user.name}</div>
                   <div className="text-[12px] text-gray-500">{user.email}</div>
-                  <div className="mt-1.5 flex items-center gap-1.5">
+                  <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
                     <StatusBadge status={user.status} />
                     <Tag color="cyan" className="!m-0 !text-[11px]">{user.plan}</Tag>
+                    <VerifiedStatusBadge status={verifiedStatus} />
                   </div>
                 </div>
               </div>
@@ -165,7 +236,7 @@ export default function UserDetail() {
               <Detail
                 icon={ShieldCheck}
                 label="Verified"
-                value={userDetails.verified ? 'Verified' : 'Not verified'}
+                value={formatVerifiedStatusLabel(verifiedStatus)}
               />
             </div>
 
@@ -202,6 +273,102 @@ export default function UserDetail() {
 
         {/* Right column - account history */}
         <div className="xl:col-span-2 space-y-6">
+          <SectionCard
+            title="Identity verification"
+            description="Compare the user's selfie with their ID document, then approve or reject."
+            action={
+              isPending ? (
+                <div className="flex items-center gap-2">
+                  <Popconfirm
+                    title="Verify this user?"
+                    description="This will approve the user's verification request."
+                    okText="Verify"
+                    cancelText="Cancel"
+                    onConfirm={() =>
+                      void handleVerifiedStatusUpdate('verified', 'verify')
+                    }
+                  >
+                    <Button
+                      size="small"
+                      type="primary"
+                      ghost
+                      icon={<ShieldCheck className="h-3.5 w-3.5" />}
+                      loading={
+                        isUpdatingVerifiedStatus && verifyAction === 'verify'
+                      }
+                    >
+                      Verify
+                    </Button>
+                  </Popconfirm>
+                  <Popconfirm
+                    title="Reject verification?"
+                    description="This user will need to submit verification again."
+                    okText="Reject"
+                    okButtonProps={{ danger: true }}
+                    cancelText="Cancel"
+                    onConfirm={() =>
+                      void handleVerifiedStatusUpdate('rejected', 'reject')
+                    }
+                  >
+                    <Button
+                      size="small"
+                      danger
+                      ghost
+                      icon={<ShieldX className="h-3.5 w-3.5" />}
+                      loading={
+                        isUpdatingVerifiedStatus && verifyAction === 'reject'
+                      }
+                    >
+                      Reject
+                    </Button>
+                  </Popconfirm>
+                </div>
+              ) : undefined
+            }
+          >
+            <div className="space-y-5">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                <MetaItem
+                  label="Status"
+                  value={<VerifiedStatusBadge status={verifiedStatus} />}
+                />
+                <MetaItem
+                  label="Document type"
+                  value={userDetails.documentType || '—'}
+                />
+                <MetaItem
+                  label="Admin verified"
+                  value={userDetails.isAdminVerified ? 'Yes' : 'No'}
+                />
+              </div>
+
+              {hasVerificationMedia ? (
+                <Image.PreviewGroup>
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <VerificationImageCard
+                      label="Own picture"
+                      icon={Camera}
+                      emptyText="No selfie uploaded."
+                      src={ownPicture}
+                      alt={`${user.name} own picture`}
+                    />
+                    <VerificationImageCard
+                      label="ID document"
+                      icon={FileText}
+                      emptyText="No document uploaded."
+                      src={documentImage}
+                      alt={`${user.name} ID document`}
+                    />
+                  </div>
+                </Image.PreviewGroup>
+              ) : (
+                <p className="rounded-lg border border-dashed border-gray-200 bg-gray-50 px-4 py-8 text-center text-[13px] text-gray-500">
+                  No verification media uploaded yet.
+                </p>
+              )}
+            </div>
+          </SectionCard>
+
           <SectionCard title="Account status & history">
             <ol className="relative pl-5">
               <span className="absolute left-1.5 top-1 bottom-1 w-px bg-gray-200" />
@@ -246,11 +413,74 @@ function Detail({ icon: Icon, label, value }: { icon: any; label: string; value:
     </div>
   );
 }
+
 function Row({ k, v }: { k: string; v: React.ReactNode }) {
   return (
     <div className="flex items-center justify-between">
       <span className="text-[12px] text-gray-500">{k}</span>
       <span className="text-[13px] text-gray-900">{v}</span>
+    </div>
+  );
+}
+
+function MetaItem({
+  label,
+  value,
+}: {
+  label: string;
+  value: React.ReactNode;
+}) {
+  return (
+    <div className="rounded-lg border border-gray-100 bg-gray-50 px-3 py-2.5">
+      <div className="mb-1 text-[11px] font-medium uppercase tracking-wider text-gray-400">
+        {label}
+      </div>
+      <div className="text-[13px] font-medium text-gray-900">{value}</div>
+    </div>
+  );
+}
+
+const IMAGE_FALLBACK =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='200' viewBox='0 0 320 200'%3E%3Crect width='320' height='200' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%239ca3af' font-size='14'%3EImage unavailable%3C/text%3E%3C/svg%3E";
+
+function VerificationImageCard({
+  label,
+  icon: Icon,
+  src,
+  alt,
+  emptyText,
+}: {
+  label: string;
+  icon: typeof Camera;
+  src?: string;
+  alt: string;
+  emptyText: string;
+}) {
+  return (
+    <div className="overflow-hidden rounded-xl border border-gray-200">
+      <div className="flex items-center gap-1.5 border-b border-gray-100 bg-gray-50 px-3 py-2 text-[11px] font-medium uppercase tracking-wider text-gray-500">
+        <Icon className="h-3.5 w-3.5" />
+        {label}
+      </div>
+      {src ? (
+        <Image
+          src={src}
+          alt={alt}
+          width="100%"
+          style={{
+            width: '100%',
+            height: 280,
+            objectFit: 'contain',
+            background: '#f9fafb',
+          }}
+          rootClassName="!block"
+          fallback={IMAGE_FALLBACK}
+        />
+      ) : (
+        <div className="flex h-[280px] items-center justify-center bg-gray-50 px-4 text-center text-[13px] text-gray-500">
+          {emptyText}
+        </div>
+      )}
     </div>
   );
 }

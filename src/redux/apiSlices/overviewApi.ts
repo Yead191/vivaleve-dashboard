@@ -204,6 +204,8 @@ const overviewApi = api.injectEndpoints({
   }),
 });
 
+export { overviewApi };
+
 export const {
   useGetOverviewQuery,
   useGetUserActivityQuery,

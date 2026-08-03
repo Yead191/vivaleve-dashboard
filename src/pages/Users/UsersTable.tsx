@@ -143,9 +143,9 @@ export default function UsersTable({
       fixed: "right",
       width: 300,
       render: (_, row) => {
-        const canVerify =
-          row.verifiedStatus === "pending" || row.verifiedStatus === "rejected";
-        const canReject = row.verifiedStatus === "pending";
+        // Verify / Reject only while verification is pending.
+        // After verified or rejected, hide both and keep Details (+ Ban).
+        const isPending = row.verifiedStatus === "pending";
 
         return (
           <div className="flex min-w-[260px] flex-wrap items-center justify-end gap-1.5 sm:gap-2">
@@ -154,7 +154,7 @@ export default function UsersTable({
                 <span className="hidden sm:inline">Details</span>
               </Button>
             </Link>
-            {canVerify && (
+            {isPending && (
               <Popconfirm
                 title="Verify this user?"
                 description="This will approve the user's verification request."
@@ -173,7 +173,7 @@ export default function UsersTable({
                 </Button>
               </Popconfirm>
             )}
-            {canReject && (
+            {isPending && (
               <Popconfirm
                 title="Reject verification?"
                 description="This user will need to submit verification again."

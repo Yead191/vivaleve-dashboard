@@ -7,6 +7,7 @@ import ReportedAccountsTab from './ReportedAccountsTab';
 import BanUserModal from './BanUserModal';
 import { reportsAgainstUsers, User } from '../../data/mockData';
 import {
+  overviewApi,
   useGetUserListQuery,
   useLazyGetUserListQuery,
 } from '../../redux/apiSlices/overviewApi';
@@ -15,6 +16,7 @@ import {
   useBanUserMutation,
   useUpdateVerifiedStatusMutation,
 } from '../../redux/apiSlices/userApi';
+import { useAppDispatch } from '../../redux/hooks';
 import { toast } from 'sonner';
 import * as XLSX from 'xlsx';
 import {
@@ -60,6 +62,7 @@ const matchesFilters = (user: User, filters: UserFilters) => {
 };
 
 export default function UsersList() {
+  const dispatch = useAppDispatch();
   const [tab, setTab] = useState<string>('all');
   const [page, setPage] = useState(1);
   const [filters, setFilters] = useState<UserFilters>({
@@ -79,6 +82,7 @@ export default function UsersList() {
   const [actionType, setActionType] = useState<'verify' | 'reject' | null>(
     null,
   );
+  const currentListPage = userList?.pagination.page ?? page;
 
   const users = useMemo<User[]>(
     () => (userList?.data ?? []).map(mapDashboardUser),
@@ -154,6 +158,19 @@ export default function UsersList() {
     setActionUserId(user.id);
     setActionType(action);
 
+    const patch = dispatch(
+      overviewApi.util.updateQueryData(
+        'getUserList',
+        currentListPage,
+        (draft) => {
+          const target = draft.data.find((item) => item._id === user.id);
+          if (!target) return;
+          target.verifiedStatus = verifiedStatus;
+          target.isAdminVerified = verifiedStatus === 'verified';
+        },
+      ),
+    );
+
     try {
       await updateVerifiedStatus({ userId: user.id, verifiedStatus }).unwrap();
       toast.success(
@@ -162,6 +179,7 @@ export default function UsersList() {
           : `${user.name} verification has been rejected`,
       );
     } catch {
+      patch.undo();
       toast.error(
         verifiedStatus === 'verified'
           ? 'Unable to verify user. Please try again.'
