@@ -1,4 +1,5 @@
 import React from 'react';
+import { BRAND_LOGO_URL, BRAND_NAME } from '../../config/env';
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -17,9 +18,9 @@ export default function AuthLayout({ children, title, subtitle }: AuthLayoutProp
         <div className="bg-white rounded-3xl shadow-2xl shadow-gray-200/50 border border-gray-100/50 p-8 md:p-10">
           {/* Logo */}
           <div className="flex justify-center mb-4">
-
-            <img src="/logo.png" alt="Logo" className="w-fit h-24 object-contain" />
-
+            <div className="bg-black rounded-2xl px-5 py-3">
+              <img src={BRAND_LOGO_URL} alt={BRAND_NAME} className="h-20 w-auto object-contain" />
+            </div>
           </div>
 
           {/* Header */}
@@ -34,7 +35,7 @@ export default function AuthLayout({ children, title, subtitle }: AuthLayoutProp
 
         {/* Footer text */}
         <p className="text-center text-gray-400 text-xs mt-8">
-          &copy; 2026 VivaLeve Admin Console. All rights reserved.
+          &copy; 2026 Sigaleve Admin Console. All rights reserved.
         </p>
       </div>
     </div>

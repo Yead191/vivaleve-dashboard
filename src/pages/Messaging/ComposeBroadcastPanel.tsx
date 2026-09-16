@@ -69,7 +69,7 @@ export default function ComposeBroadcastPanel() {
           </div>
 
           <Field label="Deep link / CTA URL (optional)">
-            <Input value={ctaUrl} onChange={e => setCtaUrl(e.target.value)} placeholder="vivaleve://offers/premium  or  https://…" />
+            <Input value={ctaUrl} onChange={e => setCtaUrl(e.target.value)} placeholder="sigaleve://offers/premium  or  https://…" />
           </Field>
 
           <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
@@ -108,7 +108,7 @@ export default function ComposeBroadcastPanel() {
               </div>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-medium text-gray-700">VivaLeve</span>
+                  <span className="text-[11px] font-medium text-gray-700">Sigaleve</span>
                   <span className="text-[10px] text-gray-400">now</span>
                 </div>
                 <div className="text-[13px] font-semibold text-gray-900 truncate">{title || 'Your title here'}</div>
@@ -134,7 +134,7 @@ export default function ComposeBroadcastPanel() {
                 <Bell className="w-4 h-4 text-white" />
               </div>
               <div className="flex-1">
-                <div className="text-[11px] font-medium text-gray-700">VivaLeve</div>
+                <div className="text-[11px] font-medium text-gray-700">Sigaleve</div>
                 <div className="text-[13px] font-semibold text-gray-900">{title}</div>
                 <div className="text-[12px] text-gray-600">{body}</div>
               </div>

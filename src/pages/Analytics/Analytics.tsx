@@ -382,7 +382,7 @@ export default function Analytics() {
       const workbook = XLSX.utils.book_new();
 
       const overviewSheet = XLSX.utils.aoa_to_sheet([
-        ["Vivaleve Analytics Report"],
+        ["Sigaleve Analytics Report"],
         ["Generated", generatedAt],
       ]);
       XLSX.utils.book_append_sheet(workbook, overviewSheet, "Overview");
@@ -440,7 +440,7 @@ export default function Analytics() {
 
       downloadExcel(
         workbook,
-        `vivaleve-analytics-${generatedAt.slice(0, 10)}.xlsx`,
+        `sigaleve-analytics-${generatedAt.slice(0, 10)}.xlsx`,
       );
       toast.success("Analytics report exported.");
     } catch {

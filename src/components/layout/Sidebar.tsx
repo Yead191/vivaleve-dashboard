@@ -3,6 +3,7 @@ import { LogOut } from 'lucide-react';
 import { navConfig } from '../../routes/navConfig';
 import { toast } from 'sonner';
 import { performLogout } from '../../redux/logout';
+import { BRAND_LOGO_URL, BRAND_NAME } from '../../config/env';
 
 export default function Sidebar() {
   const navigate = useNavigate();
@@ -16,9 +17,10 @@ export default function Sidebar() {
   return (
     <aside className="w-64 shrink-0 bg-white border-r border-gray-200 flex flex-col h-screen sticky top-0">
       {/* Brand */}
-      <Link to={'/'} className="h-24 flex items-center gap-2.5 justify-center px-5 border-b border-gray-200 py-2">
-        <img src="/logo.png" alt="" className='w-fit h-full object-contain ' />
-
+      <Link to={'/'} className="h-24 flex items-center justify-center px-3 border-b border-gray-200 py-2">
+        <div className="h-full w-full bg-black rounded-xl flex items-center justify-center overflow-hidden px-2">
+          <img src={BRAND_LOGO_URL} alt={BRAND_NAME} className="h-full w-auto object-contain" />
+        </div>
       </Link>
 
       {/* Nav */}

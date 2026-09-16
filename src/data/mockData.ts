@@ -187,9 +187,9 @@ export const moderationRules: ModerationRule[] = [
 ];
 
 export const chatLogSearches = [
-  { id: 'cl_1', pair: 'Maya Chen ↔ Jordan Lee',     conversationId: 'conv_4422', accessedBy: 'admin@vivaleve', accessedAt: '2026-05-06 11:24', reason: 'Harassment investigation' },
-  { id: 'cl_2', pair: 'Daniel Park ↔ Anna Petrova', conversationId: 'conv_4391', accessedBy: 'mod1@vivaleve', accessedAt: '2026-05-06 09:48', reason: 'User report #r_549' },
-  { id: 'cl_3', pair: 'Liam Murphy ↔ Ethan Brooks', conversationId: 'conv_4356', accessedBy: 'admin@vivaleve', accessedAt: '2026-05-05 17:12', reason: 'Compliance audit' },
+  { id: 'cl_1', pair: 'Maya Chen ↔ Jordan Lee',     conversationId: 'conv_4422', accessedBy: 'admin@sigaleve', accessedAt: '2026-05-06 11:24', reason: 'Harassment investigation' },
+  { id: 'cl_2', pair: 'Daniel Park ↔ Anna Petrova', conversationId: 'conv_4391', accessedBy: 'mod1@sigaleve', accessedAt: '2026-05-06 09:48', reason: 'User report #r_549' },
+  { id: 'cl_3', pair: 'Liam Murphy ↔ Ethan Brooks', conversationId: 'conv_4356', accessedBy: 'admin@sigaleve', accessedAt: '2026-05-05 17:12', reason: 'Compliance audit' },
 ];
 
 // ─── Analytics ──────────────────────────────────────────────────────────
@@ -323,7 +323,7 @@ export interface SafetyTemplate {
 export const safetyTemplates: SafetyTemplate[] = [
   { id: 'st_1', title: 'Meeting safely',         body: 'Always meet in public for first dates. Tell a friend where you’re going.', frequency: 'every 30 days', active: true },
   { id: 'st_2', title: 'Photo verification',     body: 'Verify your profile photos to get a blue badge and 2× more matches.',      frequency: 'on signup',     active: true },
-  { id: 'st_3', title: 'Beware of scams',        body: 'Never send money to someone you met on VivaLeve. Report suspicious DMs.',  frequency: 'every 60 days', active: true },
+  { id: 'st_3', title: 'Beware of scams',        body: 'Never send money to someone you met on Sigaleve. Report suspicious DMs.',  frequency: 'every 60 days', active: true },
   { id: 'st_4', title: 'Profile completion tip', body: 'Profiles with 4+ photos get up to 3× more matches. Add more photos!',     frequency: 'one-time',      active: false },
 ];
 

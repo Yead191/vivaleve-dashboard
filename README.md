@@ -1,6 +1,6 @@
-# VivaLeve · Admin Dashboard
+# Sigaleve · Admin Dashboard
 
-Admin console for the VivaLeve dating app.
+Admin console for the Sigaleve dating app.
 
 ## Stack
 

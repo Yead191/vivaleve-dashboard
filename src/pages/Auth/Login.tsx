@@ -63,7 +63,7 @@ export default function Login() {
   return (
     <AuthLayout
       title="Welcome Back"
-      subtitle="Sign in to continue to VivaLeve admin console"
+      subtitle="Sign in to continue to Sigaleve admin console"
     >
       <Form
         form={form}
@@ -82,7 +82,7 @@ export default function Login() {
         >
           <Input
             prefix={<Mail className="w-4 h-4 text-gray-400 mr-2" />}
-            placeholder="admin@vivaleve.com"
+            placeholder="admin@sigaleve.com"
             className="h-12 rounded-xl border-gray-200 hover:border-[#429CA8] focus:border-[#429CA8]"
           />
         </Form.Item>

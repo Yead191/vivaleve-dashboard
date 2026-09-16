@@ -37,7 +37,7 @@ export default function ForgotPassword() {
         >
           <Input
             prefix={<Mail className="w-4 h-4 text-gray-400 mr-2" />}
-            placeholder="admin@vivaleve.com"
+            placeholder="admin@sigaleve.com"
             className="h-12 rounded-xl border-gray-200 hover:border-[#429CA8] focus:border-[#429CA8]"
           />
         </Form.Item>

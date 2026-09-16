@@ -136,7 +136,7 @@ export default function UsersList() {
       XLSX.utils.book_append_sheet(workbook, worksheet, 'Users');
       XLSX.writeFile(
         workbook,
-        `vivaleve-users-${new Date().toISOString().slice(0, 10)}.xlsx`,
+        `sigaleve-users-${new Date().toISOString().slice(0, 10)}.xlsx`,
       );
       toast.success(`Exported ${exportUsers.length} users.`);
     } catch {
@@ -221,7 +221,7 @@ export default function UsersList() {
     <div className="space-y-6">
       <PageHeader
         title="User management"
-        subtitle="Search, filter, moderate and inspect every account on VivaLeve."
+        subtitle="Search, filter, moderate and inspect every account on Sigaleve."
       />
 
       <TabsBar tabs={tabs} value={tab} onChange={setTab} />
